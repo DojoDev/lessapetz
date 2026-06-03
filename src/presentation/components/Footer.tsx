@@ -5,6 +5,10 @@ export default function Footer() {
   const mapsUrl = process.env.NEXT_PUBLIC_GOOGLE_MAPS_URL || "https://maps.google.com";
   const openingHours = process.env.NEXT_PUBLIC_OPENING_HOURS || "Segunda a Sábado - 08:00 às 18:00";
   const rawNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "5519999999999";
+  const brandTitle = process.env.NEXT_PUBLIC_FOOTER_BRAND_TITLE || "Lessa Petz";
+  const brandSubtitle = process.env.NEXT_PUBLIC_FOOTER_BRAND_SUBTITLE || "Escola & Estética Pet";
+  const brandDesc = process.env.NEXT_PUBLIC_FOOTER_DESC || "Formando profissionais de excelência e oferecendo serviços de estética pet com padrões de qualidade internacionais.";
+  const copyrightText = process.env.NEXT_PUBLIC_FOOTER_COPYRIGHT || "Lessa Petz. Todos os direitos reservados. Escola de Banho e Tosa e Estética Animal de Alto Padrão.";
   
   // Format WhatsApp number for display: +55 (19) 99999-9999 (assuming standard BR phone pattern)
   const formattedPhone = rawNumber.length === 13 
@@ -26,12 +30,12 @@ export default function Footer() {
               />
             </div>
             <div className="flex flex-col">
-              <span className="font-serif font-bold text-lg tracking-wider text-brand-gold-light uppercase">Lessa Petz</span>
-              <span className="text-[10px] text-stone-300 font-semibold uppercase tracking-widest">Escola &amp; Estética Pet</span>
+              <span className="font-serif font-bold text-lg tracking-wider text-brand-gold-light uppercase">{brandTitle}</span>
+              <span className="text-[10px] text-stone-300 font-semibold uppercase tracking-widest">{brandSubtitle}</span>
             </div>
           </div>
           <p className="text-stone-300 text-xs sm:text-sm font-light leading-relaxed max-w-xs">
-            Formando profissionais de excelência e oferecendo serviços de estética pet com padrões de qualidade internacionais.
+            {brandDesc}
           </p>
         </div>
 
@@ -93,7 +97,7 @@ export default function Footer() {
 
       {/* Bottom Copyright bar */}
       <div className="w-full bg-brand-burgundy-dark/50 border-t border-brand-gold/10 py-6 text-center text-[11px] sm:text-xs text-stone-400 font-light px-4">
-        <p>&copy; {new Date().getFullYear()} Lessa Petz. Todos os direitos reservados. Escola de Banho e Tosa e Estética Animal de Alto Padrão.</p>
+        <p>&copy; {new Date().getFullYear()} {copyrightText}</p>
       </div>
     </footer>
   );
