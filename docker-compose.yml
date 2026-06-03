@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: lessapetz-app
+    restart: always
+    ports:
+      - "18274:18274"
+    environment:
+      - NODE_ENV=production
+      - PORT=18274
