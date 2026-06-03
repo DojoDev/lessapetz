@@ -113,11 +113,11 @@ export class StaticCatalogRepository implements CatalogRepository {
   private courses: Course[] = [
     {
       id: "crs-iniciante",
-      title: "Curso de Banho e Tosa Iniciante",
+      title: "Curso Profissional de Banho e Tosa",
       category: "Formação",
-      description: "Formação profissionalizante completa. Do absoluto zero ao mercado de trabalho: técnicas de banho, secagem, tosa higiênica, manuseio de equipamentos e tosa em máquina.",
+      description: "Aprenda na prática as principais técnicas de banho e tosa para cuidar dos pets com segurança, carinho e profissionalismo. Um curso completo ministrado por uma Médica Veterinária.",
       duration: "80 horas",
-      price: "2.400,00",
+      price: "1.500,00",
       level: "Iniciante",
       certificate: "Certificado Profissional com Selo de Excelência Lessa Petz",
     },

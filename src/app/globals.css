@@ -10,8 +10,8 @@
   --color-brand-cream: #fcfbf9;
   --color-brand-cream-dark: #f3f0e8;
   
-  --font-sans: var(--font-montserrat), sans-serif;
-  --font-serif: var(--font-playfair), serif;
+  --font-sans: var(--font-plus-jakarta), sans-serif;
+  --font-serif: var(--font-outfit), sans-serif;
   
   --animate-fade-in: fade-in 0.6s ease-out forwards;
   --animate-slide-up: slide-up 0.5s ease-out forwards;

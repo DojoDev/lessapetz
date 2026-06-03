@@ -3,68 +3,50 @@ import Footer from "@/presentation/components/Footer";
 import { GetWhatsAppUrl } from "@/usecases/GetWhatsAppUrl";
 
 export const metadata = {
-  title: "Curso de Banho e Tosa Iniciante | Lessa Petz",
-  description: "Formação profissionalizante completa na Lessa Petz. Aprenda banho, secagem, tosa higiênica e máquina com aulas práticas em modelos reais.",
+  title: "Curso Profissional de Banho e Tosa | Lessa Petz",
+  description: "Aprenda na prática as principais técnicas de banho e tosa para cuidar dos pets com segurança, carinho e profissionalismo. Um curso completo ministrado por uma Médica Veterinária.",
 };
 
 export default function CourseDetailsPage() {
   const getWhatsAppUrl = new GetWhatsAppUrl();
-  const whatsAppUrl = getWhatsAppUrl.executeForCourse("Curso de Banho e Tosa Iniciante", "2.400,00");
+  const whatsAppUrl = getWhatsAppUrl.executeForCourse("Curso Profissional de Banho e Tosa", "1.500,00");
 
   const modules = [
     {
-      title: "Módulo 1: Introdução & Comportamento Animal",
+      title: "Módulo 1: Técnicas de Banho e Preparação",
+      duration: "30 horas",
+      topics: [
+        "Organização do ambiente, higiene e segurança no atendimento.",
+        "Manejo correto dos animais e comportamento pet.",
+        "Técnicas profissionais de banho para diferentes raças e tipos de pelagem.",
+        "Escolha correta de shampoos, condicionadores e produtos específicos.",
+        "Cuidados com animais com pele sensível, problemas dermatológicos, pulgas e carrapatos.",
+        "Secagem, escovação e desembolo da pelagem."
+      ]
+    },
+    {
+      title: "Módulo 2: Módulo Completo de Tosas",
+      duration: "40 horas",
+      topics: [
+        "Introdução às principais técnicas de tosa profissional.",
+        "Tosa higiênica e sua importância para a saúde do pet.",
+        "Tosa na máquina e acabamento com tesoura.",
+        "Tosa bebê e estilos mais procurados pelos tutores.",
+        "Tosas específicas conforme raça e tipo de pelagem.",
+        "Uso correto das máquinas de tosa com fio e sem fio.",
+        "Conhecimento sobre lâminas, numerações, alturas de corte e adaptadores.",
+        "Como escolher a lâmina ideal para cada procedimento.",
+        "Cuidados para evitar falhas, irritações e acidentes durante a tosa.",
+        "Finalização e acabamento profissional."
+      ]
+    },
+    {
+      title: "Módulo 3: Procedimentos de Higiene e Cuidados Especiais",
       duration: "10 horas",
       topics: [
-        "Psicologia canina e felina aplicados ao banho e tosa.",
-        "Leitura e interpretação da linguagem corporal do pet.",
-        "Técnicas de contenção segura e manejo sem estresse.",
-        "Saúde e segurança: identificação de lesões e zoonoses básicas.",
-        "Uso correto de Equipamentos de Proteção Individual (EPIs)."
-      ]
-    },
-    {
-      title: "Módulo 2: Banho, Secagem e Preparação",
-      duration: "20 horas",
-      topics: [
-        "Identificação de tipos de pelagem (curta, longa, dupla face, primitiva).",
-        "Seleção e diluição de shampoos, condicionadores e máscaras de alta performance.",
-        "Técnicas de lavagem profunda e remoção de odores.",
-        "Processo de secagem eficiente utilizando soprador e secador profissional.",
-        "Escovação correta, desembarço de nós e técnicas de rasqueamento."
-      ]
-    },
-    {
-      title: "Módulo 3: Higiene e Acabamento",
-      duration: "20 horas",
-      topics: [
-        "Limpeza segura do conduto auditivo e técnicas de proteção.",
-        "Corte de unhas e lixamento com segurança (anatomia da garra).",
-        "Tosa higiênica passo a passo: coxins (patinhas), abdômen e região íntima.",
-        "Limpeza de olhos e higienização facial.",
-        "Uso de perfumes e finalizadores adequados."
-      ]
-    },
-    {
-      title: "Módulo 4: Tosa na Máquina & Introdução à Tesoura",
-      duration: "25 horas",
-      topics: [
-        "Manuseio seguro, ergonomia e manutenção de máquinas de tosa.",
-        "Estudo de lâminas (alturas, cuidados, aquecimento) e adaptadores.",
-        "Tosa geral na máquina e técnicas de marcação de saia.",
-        "Introdução prática ao uso de tesouras (retas e dentadas).",
-        "Ajustes de acabamento e transições suaves de pelagem."
-      ]
-    },
-    {
-      title: "Módulo 5: Gestão, Empreendedorismo & Atendimento",
-      duration: "5 horas",
-      topics: [
-        "Postura profissional, ética e comunicação com tutores.",
-        "Precificação correta de banhos, tosas e tratamentos.",
-        "Estrutura básica de um pet shop / centro de estética pet de sucesso.",
-        "Gestão de agenda e redução de faltas.",
-        "Técnicas de fotografia e marketing digital para divulgar seu trabalho."
+        "Corte correto das unhas, identificando a área sensível e evitando sangramentos.",
+        "Higienização dos ouvidos.",
+        "Cuidados essenciais para oferecer conforto e segurança aos pets."
       ]
     }
   ];
@@ -129,10 +111,10 @@ export default function CourseDetailsPage() {
               Formação Profissionalizante
             </span>
             <h1 className="font-serif text-2xl sm:text-4xl md:text-5xl font-bold tracking-wide uppercase leading-tight">
-              Curso de Banho e Tosa Iniciante
+              Curso Profissional de Banho e Tosa
             </h1>
             <p className="mt-2 text-stone-200 text-xs sm:text-sm md:text-base font-light leading-relaxed">
-              O caminho completo para iniciar na área que mais cresce no Brasil. Aprenda com quem é referência de mercado e conquiste sua independência financeira.
+              Aprenda na prática as principais técnicas de banho e tosa para cuidar dos pets com segurança, carinho e profissionalismo. Um curso completo ministrado por uma Médica Veterinária.
             </p>
           </div>
         </div>
@@ -149,10 +131,13 @@ export default function CourseDetailsPage() {
                 Sobre o Curso
               </h2>
               <p className="font-sans text-stone-600 text-sm sm:text-base font-light leading-relaxed mb-4">
-                O **Curso de Banho e Tosa Iniciante da Lessa Petz** foi desenhado especificamente para quem deseja começar do absoluto zero. Não é necessário nenhum conhecimento prévio no trato animal. Nossa metodologia prática de ensino garante que você ganhe confiança e habilidade técnica desde as primeiras aulas.
+                O **Curso Profissional de Banho e Tosa – Lessa Petz** é ideal para quem deseja começar na área pet, aperfeiçoar seus conhecimentos ou transformar o amor pelos animais em uma nova profissão. Aprenda na prática as principais técnicas de banho e tosa para cuidar dos pets com segurança, carinho e profissionalismo.
+              </p>
+              <p className="font-sans text-stone-600 text-sm sm:text-base font-light leading-relaxed mb-4">
+                O curso será ministrado por uma **Médica Veterinária**, trazendo uma visão diferenciada que une estética, saúde, bem-estar animal e cuidados profissionais no dia a dia do banho e tosa.
               </p>
               <p className="font-sans text-stone-600 text-sm sm:text-base font-light leading-relaxed">
-                Você terá contato direto com todos os equipamentos de estética pet modernos, sob a supervisão constante de instrutores altamente qualificados e com ampla experiência em salão. Ao final do curso, você estará totalmente apto a trabalhar como banhista e auxiliar de tosa em pet shops, clínicas veterinárias, ou montar o seu próprio estúdio.
+                Mais do que deixar o pet bonito, você aprenderá a trabalhar respeitando a saúde, o comportamento e o bem-estar de cada animal. Aprenda com uma Médica Veterinária e dê o primeiro passo para entrar no mercado pet com confiança!
               </p>
             </div>
 
@@ -229,7 +214,7 @@ export default function CourseDetailsPage() {
                 </span>
                 <div className="flex items-baseline gap-1 mt-1">
                   <span className="font-serif text-3xl sm:text-4xl font-extrabold text-brand-burgundy">
-                    R$ 2.400,00
+                    R$ 1.500,00
                   </span>
                 </div>
                 <p className="text-[11px] text-stone-500 font-sans mt-1">
@@ -275,8 +260,7 @@ export default function CourseDetailsPage() {
                   <div className="flex flex-col">
                     <span className="text-xs font-semibold text-stone-900 uppercase tracking-wide">Opções de Turmas</span>
                     <span className="text-xs sm:text-sm text-stone-600 font-light leading-relaxed">
-                      📅 <strong>Semana:</strong> Terça e Quinta (13h30 às 17h30)<br/>
-                      📅 <strong>Sábado:</strong> Intensivo (09h00 às 17h00)
+                      📅 <strong>Aula noturna:</strong> Segunda a sexta das 18h30 às 21h00
                     </span>
                   </div>
                 </div>
