@@ -1,10 +1,10 @@
 import Image from "next/image";
 
 export default function Footer() {
-  const addressText = process.env.NEXT_PUBLIC_ADDRESS_TEXT || "Av. Exemplo de Teste, 1000 - Centro, Paulínia - SP";
-  const mapsUrl = process.env.NEXT_PUBLIC_GOOGLE_MAPS_URL || "https://maps.google.com";
-  const openingHours = process.env.NEXT_PUBLIC_OPENING_HOURS || "Segunda a Sábado - 08:00 às 18:00";
-  const rawNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "5519999999999";
+  const addressText = process.env.NEXT_PUBLIC_ADDRESS_TEXT || "Rua Salvador Lombardi Netto, 412 - Nova Paulínia, Paulínia - SP";
+  const mapsUrl = process.env.NEXT_PUBLIC_GOOGLE_MAPS_URL || "https://www.google.com/maps/search/?api=1&query=Rua+Salvador+Lombardi+Netto+412+Nova+Paulinia";
+  const openingHours = process.env.NEXT_PUBLIC_OPENING_HOURS || "Segunda a Sábado - 08:00 às 17:00";
+  const rawNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "5519992938321";
   const brandTitle = process.env.NEXT_PUBLIC_FOOTER_BRAND_TITLE || "Lessa Petz";
   const brandSubtitle = process.env.NEXT_PUBLIC_FOOTER_BRAND_SUBTITLE || "Escola & Estética Pet";
   const brandDesc = process.env.NEXT_PUBLIC_FOOTER_DESC || "Formando profissionais de excelência e oferecendo serviços de estética pet com padrões de qualidade internacionais.";

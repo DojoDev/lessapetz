@@ -2,7 +2,7 @@ export class GetWhatsAppUrl {
   private baseNumber: string;
 
   constructor() {
-    const rawNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "5519999999999";
+    const rawNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "5519992938321";
     // Sanitize phone number (strip all non-digit characters)
     this.baseNumber = rawNumber.replace(/\D/g, "");
   }
