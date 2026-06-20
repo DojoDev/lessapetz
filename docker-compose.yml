@@ -12,3 +12,19 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=18274
+
+  db:
+    image: postgres:15-alpine
+    container_name: lessapetz-db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgrespassword
+      POSTGRES_DB: lessapetz
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
