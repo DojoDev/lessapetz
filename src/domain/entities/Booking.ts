@@ -18,5 +18,6 @@ export interface Booking {
   totalPrice: number;
   status: BookingStatus;
   notes: string | null;
+  paymentMethod?: string | null;
   createdAt: Date;
 }

@@ -56,12 +56,12 @@ export class PostgresBookingRepository implements BookingRepository {
 
   async create(tenantId: string, data: Omit<Booking, 'id' | 'tenantId' | 'createdAt'>): Promise<Booking> {
     const res = await pool.query(
-      `INSERT INTO bookings (tenant_id, customer_id, pet_id, service_id, employee_id, start_at, end_at, duration_min, total_price, status, notes)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *`,
+      `INSERT INTO bookings (tenant_id, customer_id, pet_id, service_id, employee_id, start_at, end_at, duration_min, total_price, status, notes, payment_method)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) RETURNING *`,
       [
         tenantId, data.customerId, data.petId, data.serviceId, data.employeeId,
         data.startAt, data.endAt, data.durationMin, data.totalPrice,
-        data.status, data.notes,
+        data.status, data.notes, data.paymentMethod || null,
       ]
     );
     return this.mapRow(res.rows[0]);
@@ -112,6 +112,7 @@ export class PostgresBookingRepository implements BookingRepository {
       totalPrice: parseFloat(row.total_price),
       status: row.status,
       notes: row.notes,
+      paymentMethod: row.payment_method,
       createdAt: row.created_at,
     };
   }

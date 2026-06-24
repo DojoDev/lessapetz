@@ -1,4 +1,5 @@
 import { cookies } from 'next/headers';
+import Link from 'next/link';
 import { verifyJwt } from '../../infra/auth/jwt';
 import { PostgresAdminRepository } from '../../infra/repositories/PostgresAdminRepository';
 import { PostgresBookingRepository } from '../../infra/repositories/PostgresBookingRepository';
@@ -55,6 +56,15 @@ export default async function AdminDashboard() {
           <LogoutButton />
         </div>
       </header>
+
+      <div className="bg-white border-b border-slate-200 px-6 flex gap-6 text-sm font-medium">
+        <Link href="/admin" className="py-3 border-b-2 border-indigo-600 text-indigo-600">
+          Visão Geral
+        </Link>
+        <Link href="/admin/agenda" className="py-3 border-b-2 border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300 transition-colors">
+          Agenda
+        </Link>
+      </div>
 
       <main className="flex-1 max-w-7xl w-full mx-auto p-6 md:p-8">
         <div className="mb-8">
