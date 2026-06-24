@@ -1,6 +1,10 @@
 import Image from "next/image";
 
-export default function Header() {
+interface HeaderProps {
+  hideBookingButton?: boolean;
+}
+
+export default function Header({ hideBookingButton = false }: HeaderProps) {
   return (
     <header className="relative w-full">
       {/* Hero Banner Section */}
@@ -52,6 +56,17 @@ export default function Header() {
           <p className="max-w-2xl mx-auto font-sans text-stone-600 text-sm sm:text-base leading-relaxed font-light">
             Especialistas em estética pet de alto padrão para quem exige o melhor, e formação profissionalizantes de profissionais líderes de mercado. 💎
           </p>
+
+          {!hideBookingButton && (
+            <div className="mt-8 flex flex-col sm:flex-row justify-center gap-4">
+              <a
+                href="/agendamento"
+                className="inline-flex items-center justify-center px-8 py-3.5 text-base font-medium text-white bg-brand-burgundy hover:bg-brand-burgundy-light rounded-full shadow-lg shadow-brand-burgundy/30 transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0"
+              >
+                Agendar Horário / Cadastrar
+              </a>
+            </div>
+          )}
         </div>
       </div>
     </header>
