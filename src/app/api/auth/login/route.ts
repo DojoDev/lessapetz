@@ -28,11 +28,12 @@ export async function POST(request: Request) {
     const token = await signJwt({
       sub: admin.id,
       email: admin.email,
+      tenantId: admin.tenantId,
+      role: admin.role as 'root' | 'admin',
     });
 
     const response = NextResponse.json({ success: true });
-    
-    // If not in production and not https, __Host- prefix will fail, fallback to a standard name for dev.
+
     const isProduction = process.env.NODE_ENV === 'production';
     const cookieName = isProduction ? '__Host-admin_session' : 'admin_session';
 
@@ -47,8 +48,7 @@ export async function POST(request: Request) {
     });
 
     return response;
-  } catch (error) {
-    console.error('Login error:', error);
+  } catch {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

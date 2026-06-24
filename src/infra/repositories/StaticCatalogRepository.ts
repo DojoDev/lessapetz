@@ -121,6 +121,16 @@ export class StaticCatalogRepository implements CatalogRepository {
       level: "Iniciante",
       certificate: "Certificado Profissional com Selo de Excelência Lessa Petz",
     },
+    {
+      id: "crs-banhista-499",
+      title: "Curso Banhista 499",
+      category: "Especialização",
+      description: "Transforme sua paixão por pets em uma profissão lucrativa com o nosso treinamento prático, direto ao ponto.",
+      duration: "Acelerado",
+      price: "499,00",
+      level: "Iniciante",
+      certificate: "Certificado de Conclusão",
+    },
   ];
 
   async getServices(): Promise<Service[]> {

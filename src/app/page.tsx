@@ -3,6 +3,7 @@ import SocialLinks from "@/presentation/components/SocialLinks";
 import Catalog from "@/presentation/components/Catalog";
 import FAQAccordion from "@/presentation/components/FAQAccordion";
 import Footer from "@/presentation/components/Footer";
+import BookingModalContainer from "@/presentation/components/BookingModalContainer";
 
 import { StaticCatalogRepository } from "@/infra/repositories/StaticCatalogRepository";
 import { StaticFAQRepository } from "@/infra/repositories/StaticFAQRepository";
@@ -41,6 +42,9 @@ export default async function Home() {
 
       {/* Corporate address, details, and schedule footer */}
       <Footer />
+
+      {/* Global Modals */}
+      <BookingModalContainer services={services} />
     </div>
   );
 }

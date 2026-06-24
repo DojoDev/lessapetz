@@ -25,6 +25,8 @@ export const viewport: Viewport = {
   maximumScale: 5,
 };
 
+import FloatingWhatsApp from "@/presentation/components/FloatingWhatsApp";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -32,8 +34,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR" className={`${plusJakartaSans.variable} ${outfit.variable} scroll-smooth`}>
-      <body className="font-sans bg-brand-cream text-stone-900 antialiased min-h-screen">
+      <body className="font-sans bg-brand-cream text-stone-900 antialiased min-h-screen relative">
         {children}
+        <FloatingWhatsApp />
       </body>
     </html>
   );
