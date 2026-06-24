@@ -5,7 +5,7 @@ import { Course } from "@/domain/entities/Course";
 export class StaticCatalogRepository implements CatalogRepository {
   private services: Service[] = [
     {
-      id: "srv-banho-peq",
+      id: "11111111-1111-1111-1111-111111111111",
       title: "Banho & Tosa Higiênica - Porte Pequeno",
       category: "Banhos",
       description: "Banho completo com tosa higiênica inclusa. Indicado para cães de porte pequeno com pelagem curta e média. Pelagens longas sob consulta.",
@@ -13,7 +13,7 @@ export class StaticCatalogRepository implements CatalogRepository {
       price: "A partir de 65,00",
     },
     {
-      id: "srv-banho-med",
+      id: "22222222-2222-2222-2222-222222222222",
       title: "Banho & Tosa Higiênica - Porte Médio",
       category: "Banhos",
       description: "Banho completo com tosa higiênica inclusa. Indicado para cães de porte médio. Pelagens longas sob consulta.",
@@ -21,7 +21,7 @@ export class StaticCatalogRepository implements CatalogRepository {
       price: "A partir de 80,00",
     },
     {
-      id: "srv-banho-gra",
+      id: "33333333-3333-3333-3333-333333333333",
       title: "Banho & Tosa Higiênica - Porte Grande",
       category: "Banhos",
       description: "Banho completo com tosa higiênica inclusa. Indicado para cães de porte grande. Pelagens longas sob consulta.",
@@ -29,7 +29,7 @@ export class StaticCatalogRepository implements CatalogRepository {
       price: "A partir de 110,00",
     },
     {
-      id: "srv-banho-racas",
+      id: "44444444-4444-4444-4444-444444444444",
       title: "Banho - Raças Específicas",
       category: "Banhos",
       description: "Banho completo com tosa higiênica inclusa. Adaptado para raças específicas (ex: Spitz Alemão, Chow Chow, etc.). Pelagens longas sob consulta.",
@@ -37,7 +37,7 @@ export class StaticCatalogRepository implements CatalogRepository {
       price: "A partir de 140,00",
     },
     {
-      id: "srv-tosa-maq-peq",
+      id: "55555555-5555-5555-5555-555555555555",
       title: "Tosa na Máquina - Porte Pequeno",
       category: "Tosas",
       description: "Tosa completa realizada na máquina para cães de porte pequeno. Inclui banho completo e tosa higiênica.",
@@ -45,7 +45,7 @@ export class StaticCatalogRepository implements CatalogRepository {
       price: "110,00",
     },
     {
-      id: "srv-tosa-maq-med",
+      id: "66666666-6666-6666-6666-666666666666",
       title: "Tosa na Máquina - Porte Médio",
       category: "Tosas",
       description: "Tosa completa realizada na máquina para cães de porte médio. Inclui banho completo e tosa higiênica.",
@@ -53,7 +53,7 @@ export class StaticCatalogRepository implements CatalogRepository {
       price: "130,00",
     },
     {
-      id: "srv-tosa-maq-gra",
+      id: "77777777-7777-7777-7777-777777777777",
       title: "Tosa na Máquina - Porte Grande",
       category: "Tosas",
       description: "Tosa completa realizada na máquina para cães de porte grande. Inclui banho completo e tosa higiênica.",
@@ -61,7 +61,7 @@ export class StaticCatalogRepository implements CatalogRepository {
       price: "Valor a consultar",
     },
     {
-      id: "srv-tosa-bebe-peq",
+      id: "88888888-8888-8888-8888-888888888888",
       title: "Tosa Bebê - Porte Pequeno",
       category: "Tosas",
       description: "Corte inteiro feito na tesoura/máquina que deixa o pet com aparência de filhote. Indicado para porte pequeno. Inclui banho completo e tosa higiênica.",
@@ -69,7 +69,7 @@ export class StaticCatalogRepository implements CatalogRepository {
       price: "120,00",
     },
     {
-      id: "srv-tosa-bebe-med",
+      id: "99999999-9999-9999-9999-999999999999",
       title: "Tosa Bebê - Porte Médio",
       category: "Tosas",
       description: "Corte inteiro feito na tesoura/máquina que deixa o pet com aparência de filhote. Indicado para porte médio. Inclui banho completo e tosa higiênica.",
@@ -77,7 +77,7 @@ export class StaticCatalogRepository implements CatalogRepository {
       price: "140,00",
     },
     {
-      id: "srv-tosa-bebe-gra",
+      id: "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
       title: "Tosa Bebê - Porte Grande",
       category: "Tosas",
       description: "Corte feito para deixar o pet com aparência de filhote. Indicado para porte grande. Inclui banho completo e tosa higiênica.",
@@ -85,7 +85,7 @@ export class StaticCatalogRepository implements CatalogRepository {
       price: "Valor a consultar",
     },
     {
-      id: "srv-pacote-peq",
+      id: "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
       title: "Pacote Mensal - Porte Pequeno",
       category: "Pacotes",
       description: "Plano mensal contendo 4 banhos, 1 tosa higiênica e 1 hidratação. Indicado para porte pequeno. Pelagens longas e raças específicas sob consulta. Desembolo cobrado à parte.",
@@ -93,7 +93,7 @@ export class StaticCatalogRepository implements CatalogRepository {
       price: "200,00",
     },
     {
-      id: "srv-pacote-med",
+      id: "cccccccc-cccc-cccc-cccc-cccccccccccc",
       title: "Pacote Mensal - Porte Médio",
       category: "Pacotes",
       description: "Plano mensal contendo 4 banhos, 1 tosa higiênica e 1 hidratação. Indicado para porte médio. Pelagens longas e raças específicas sob consulta. Desembolo cobrado à parte.",
@@ -101,7 +101,7 @@ export class StaticCatalogRepository implements CatalogRepository {
       price: "245,00",
     },
     {
-      id: "srv-pacote-gra",
+      id: "dddddddd-dddd-dddd-dddd-dddddddddddd",
       title: "Pacote Mensal - Porte Grande",
       category: "Pacotes",
       description: "Plano mensal contendo 4 banhos, 1 tosa higiênica e 1 hidratação. Indicado para porte grande. Pelagens longas e raças específicas sob consulta. Desembolo cobrado à parte.",

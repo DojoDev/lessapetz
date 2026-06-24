@@ -10,16 +10,16 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // ── Admin route protection ────────────────────────────────
-  if (pathname.startsWith('/admin') && !pathname.startsWith('/admin/login')) {
+  if (pathname.startsWith('/admin')) {
     const token = request.cookies.get(adminCookie)?.value;
 
     if (!token) {
-      return NextResponse.redirect(new URL('/admin/login', request.url));
+      return NextResponse.redirect(new URL('/login', request.url));
     }
 
     const payload = await verifyJwt(token);
     if (!payload || (payload.role !== 'root' && payload.role !== 'admin')) {
-      const response = NextResponse.redirect(new URL('/admin/login', request.url));
+      const response = NextResponse.redirect(new URL('/login', request.url));
       response.cookies.delete(adminCookie);
       return response;
     }
@@ -33,8 +33,8 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next({ request: { headers: requestHeaders } });
   }
 
-  // ── Redirect /admin/login to /admin if already logged in ──
-  if (pathname === '/admin/login') {
+  // ── Redirect /login to /admin if already logged in ──
+  if (pathname === '/login') {
     const token = request.cookies.get(adminCookie)?.value;
     if (token) {
       const payload = await verifyJwt(token);
@@ -74,5 +74,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/admin/:path*', '/booking/:path*'],
+  matcher: ['/admin/:path*', '/booking/:path*', '/login'],
 };

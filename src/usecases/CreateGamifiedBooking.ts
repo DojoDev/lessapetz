@@ -20,6 +20,7 @@ export interface GamifiedBookingDTO {
   booking: {
     serviceId: string;
     startAt: Date;
+    paymentMethod?: string;
   };
 }
 
@@ -81,6 +82,7 @@ export class CreateGamifiedBooking {
       totalPrice: 100, // default price for gamified form, should be dynamic later
       status: 'confirmed' as BookingStatus,
       notes: "Criado via Agendamento Expresso (Gamificado)",
+      paymentMethod: booking.paymentMethod || null,
     });
 
     return { bookingId: newBooking.id };

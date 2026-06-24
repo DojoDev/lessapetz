@@ -4,7 +4,7 @@ import { fileURLToPath } from 'url';
 
 const { Pool } = pg;
 
-async function init() {
+export async function init() {
   const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
   });
