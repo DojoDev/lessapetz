@@ -30,12 +30,12 @@ export class PostgresPetRepository implements PetRepository {
 
   async create(tenantId: string, data: Omit<Pet, 'id' | 'tenantId' | 'createdAt'>): Promise<Pet> {
     const res = await pool.query(
-      `INSERT INTO pets (tenant_id, customer_id, name, breed, date_of_birth, gender, weight, size_category, coat_type, behavior, health_notes)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *`,
+      `INSERT INTO pets (tenant_id, customer_id, name, species, breed, date_of_birth, gender, weight, size_category, coat_type, behavior, health_notes, photo_url)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) RETURNING *`,
       [
-        tenantId, data.customerId, data.name, data.breed, data.dateOfBirth,
+        tenantId, data.customerId, data.name, data.species, data.breed, data.dateOfBirth,
         data.gender, data.weight, data.sizeCategory, data.coatType,
-        data.behavior, data.healthNotes,
+        data.behavior, data.healthNotes, data.photoUrl
       ]
     );
     return this.mapRow(res.rows[0]);
@@ -47,6 +47,7 @@ export class PostgresPetRepository implements PetRepository {
     let idx = 1;
 
     if (data.name !== undefined) { fields.push(`name = $${idx++}`); values.push(data.name); }
+    if (data.species !== undefined) { fields.push(`species = $${idx++}`); values.push(data.species); }
     if (data.breed !== undefined) { fields.push(`breed = $${idx++}`); values.push(data.breed); }
     if (data.dateOfBirth !== undefined) { fields.push(`date_of_birth = $${idx++}`); values.push(data.dateOfBirth); }
     if (data.gender !== undefined) { fields.push(`gender = $${idx++}`); values.push(data.gender); }
@@ -55,6 +56,7 @@ export class PostgresPetRepository implements PetRepository {
     if (data.coatType !== undefined) { fields.push(`coat_type = $${idx++}`); values.push(data.coatType); }
     if (data.behavior !== undefined) { fields.push(`behavior = $${idx++}`); values.push(data.behavior); }
     if (data.healthNotes !== undefined) { fields.push(`health_notes = $${idx++}`); values.push(data.healthNotes); }
+    if (data.photoUrl !== undefined) { fields.push(`photo_url = $${idx++}`); values.push(data.photoUrl); }
 
     if (fields.length === 0) return this.findById(tenantId, id);
 
@@ -81,6 +83,7 @@ export class PostgresPetRepository implements PetRepository {
       tenantId: row.tenant_id,
       customerId: row.customer_id,
       name: row.name,
+      species: row.species || 'dog',
       breed: row.breed,
       dateOfBirth: row.date_of_birth,
       gender: row.gender,
@@ -89,6 +92,7 @@ export class PostgresPetRepository implements PetRepository {
       coatType: row.coat_type,
       behavior: row.behavior,
       healthNotes: row.health_notes,
+      photoUrl: row.photo_url,
       createdAt: row.created_at,
     };
   }

@@ -38,9 +38,15 @@ export async function POST(request: Request) {
     // Create customer
     const customer = await customerRepo.create(tenant.id, {
       fullName,
+      cpf: null,
       phone: phone || null,
       email,
       address: address || null,
+      zipCode: null,
+      street: null,
+      number: null,
+      neighborhood: null,
+      city: null,
       passwordHash,
     });
 
