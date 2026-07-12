@@ -19,6 +19,7 @@ export interface Pet {
   tenantId: string;
   customerId: string;
   name: string;
+  species: string;
   breed: string | null;
   dateOfBirth: Date | null;
   gender: string | null;
@@ -27,5 +28,6 @@ export interface Pet {
   coatType: CoatType | null;
   behavior: Behavior | null;
   healthNotes: string | null;
+  photoUrl: string | null;
   createdAt: Date;
 }

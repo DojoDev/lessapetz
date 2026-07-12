@@ -64,6 +64,9 @@ export default async function AdminDashboard() {
         <Link href="/admin/agenda" className="py-3 border-b-2 border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300 transition-colors">
           Agenda
         </Link>
+        <Link href="/admin/customers" className="py-3 border-b-2 border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300 transition-colors">
+          Clientes
+        </Link>
       </div>
 
       <main className="flex-1 max-w-7xl w-full mx-auto p-6 md:p-8">

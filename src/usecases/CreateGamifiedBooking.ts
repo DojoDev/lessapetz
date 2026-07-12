@@ -47,9 +47,15 @@ export class CreateGamifiedBooking {
     if (!existingCustomer) {
       existingCustomer = await this.customerRepo.create(tenantId, {
         fullName: customer.fullName,
+        cpf: null,
         phone: customer.phone,
         email: customer.email,
         address: null,
+        zipCode: null,
+        street: null,
+        number: null,
+        neighborhood: null,
+        city: null,
         passwordHash: null,
       });
     }
@@ -58,6 +64,7 @@ export class CreateGamifiedBooking {
     const newPet = await this.petRepo.create(tenantId, {
       customerId: existingCustomer.id,
       name: pet.name,
+      species: 'dog',
       breed: pet.breed,
       sizeCategory: pet.sizeCategory,
       dateOfBirth: null,
@@ -66,6 +73,7 @@ export class CreateGamifiedBooking {
       coatType: null,
       behavior: null,
       healthNotes: null,
+      photoUrl: null,
     });
 
     // 3. Create Booking
@@ -83,6 +91,7 @@ export class CreateGamifiedBooking {
       status: 'confirmed' as BookingStatus,
       notes: "Criado via Agendamento Expresso (Gamificado)",
       paymentMethod: booking.paymentMethod || null,
+      paymentStatus: 'pending',
     });
 
     return { bookingId: newBooking.id };

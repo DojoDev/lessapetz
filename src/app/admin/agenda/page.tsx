@@ -4,6 +4,7 @@ import { verifyJwt } from '../../../infra/auth/jwt';
 import { PostgresAdminRepository } from '../../../infra/repositories/PostgresAdminRepository';
 import { PostgresBookingRepository } from '../../../infra/repositories/PostgresBookingRepository';
 import LogoutButton from '../LogoutButton';
+import NewBookingButton from './NewBookingButton';
 
 // Utility para formatação de datas
 const getStartOfWeek = (date: Date) => {
@@ -85,6 +86,7 @@ export default async function AgendaPage() {
               <button className="px-3 py-1 bg-white shadow-sm rounded-md text-sm font-medium">Semana</button>
               <button className="px-3 py-1 text-slate-500 text-sm font-medium hover:text-slate-700 disabled:opacity-50" disabled>Mês</button>
             </div>
+            <NewBookingButton />
           </div>
         </div>
 
