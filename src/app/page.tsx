@@ -10,6 +10,8 @@ import { StaticFAQRepository } from "@/infra/repositories/StaticFAQRepository";
 import { GetCatalog } from "@/usecases/GetCatalog";
 import { GetFAQs } from "@/usecases/GetFAQs";
 
+export const dynamic = 'force-dynamic';
+
 export default async function Home() {
   // Instantiate concrete repositories (Infra Layer)
   const catalogRepo = new PostgresCatalogRepository();
