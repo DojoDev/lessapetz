@@ -1,6 +1,14 @@
 "use client";
 
+import { usePathname } from 'next/navigation';
+
 export default function FloatingWhatsApp() {
+  const pathname = usePathname();
+  
+  if (pathname?.startsWith('/admin')) {
+    return null;
+  }
+
   const whatsAppUrl = "https://wa.me/5511999999999?text=Olá,%20gostaria%20de%20agendar%20um%20horário!";
 
   return (

@@ -30,6 +30,8 @@ export class PostgresServiceRepository implements ServiceRepository {
 
     if (data.name !== undefined) { fields.push(`name = $${idx++}`); values.push(data.name); }
     if (data.displayOrder !== undefined) { fields.push(`display_order = $${idx++}`); values.push(data.displayOrder); }
+    if (data.description !== undefined) { fields.push(`description = $${idx++}`); values.push(data.description); }
+    if (data.imageUrl !== undefined) { fields.push(`image_url = $${idx++}`); values.push(data.imageUrl); }
 
     if (fields.length === 0) return null;
 
@@ -63,7 +65,7 @@ export class PostgresServiceRepository implements ServiceRepository {
 
   async findAll(tenantId: string): Promise<PetService[]> {
     const res = await pool.query(
-      'SELECT * FROM services WHERE tenant_id = $1 ORDER BY name ASC',
+      'SELECT * FROM services WHERE tenant_id = $1 ORDER BY display_order ASC, name ASC',
       [tenantId]
     );
     return res.rows.map(this.mapService);
@@ -71,7 +73,7 @@ export class PostgresServiceRepository implements ServiceRepository {
 
   async findByCategory(tenantId: string, categoryId: string): Promise<PetService[]> {
     const res = await pool.query(
-      'SELECT * FROM services WHERE tenant_id = $1 AND category_id = $2 ORDER BY name ASC',
+      'SELECT * FROM services WHERE tenant_id = $1 AND category_id = $2 ORDER BY display_order ASC, name ASC',
       [tenantId, categoryId]
     );
     return res.rows.map(this.mapService);
@@ -79,7 +81,7 @@ export class PostgresServiceRepository implements ServiceRepository {
 
   async findActive(tenantId: string): Promise<PetService[]> {
     const res = await pool.query(
-      'SELECT * FROM services WHERE tenant_id = $1 AND is_active = true ORDER BY name ASC',
+      'SELECT * FROM services WHERE tenant_id = $1 AND is_active = true ORDER BY display_order ASC, name ASC',
       [tenantId]
     );
     return res.rows.map(this.mapService);
@@ -87,9 +89,9 @@ export class PostgresServiceRepository implements ServiceRepository {
 
   async create(tenantId: string, data: Omit<PetService, 'id' | 'tenantId' | 'createdAt'>): Promise<PetService> {
     const res = await pool.query(
-      `INSERT INTO services (tenant_id, category_id, name, description, base_duration_min, base_price, is_active)
-       VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
-      [tenantId, data.categoryId, data.name, data.description, data.baseDurationMin, data.basePrice, data.isActive]
+      `INSERT INTO services (tenant_id, category_id, name, description, base_duration_min, base_price, image_url, is_starting_price, pet_size_applicability, display_order, is_active)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *`,
+      [tenantId, data.categoryId, data.name, data.description, data.baseDurationMin, data.basePrice, data.imageUrl, data.isStartingPrice, data.petSizeApplicability, data.displayOrder, data.isActive]
     );
     return this.mapService(res.rows[0]);
   }
@@ -104,6 +106,10 @@ export class PostgresServiceRepository implements ServiceRepository {
     if (data.description !== undefined) { fields.push(`description = $${idx++}`); values.push(data.description); }
     if (data.baseDurationMin !== undefined) { fields.push(`base_duration_min = $${idx++}`); values.push(data.baseDurationMin); }
     if (data.basePrice !== undefined) { fields.push(`base_price = $${idx++}`); values.push(data.basePrice); }
+    if (data.imageUrl !== undefined) { fields.push(`image_url = $${idx++}`); values.push(data.imageUrl); }
+    if (data.isStartingPrice !== undefined) { fields.push(`is_starting_price = $${idx++}`); values.push(data.isStartingPrice); }
+    if (data.petSizeApplicability !== undefined) { fields.push(`pet_size_applicability = $${idx++}`); values.push(data.petSizeApplicability); }
+    if (data.displayOrder !== undefined) { fields.push(`display_order = $${idx++}`); values.push(data.displayOrder); }
     if (data.isActive !== undefined) { fields.push(`is_active = $${idx++}`); values.push(data.isActive); }
 
     if (fields.length === 0) return this.findById(tenantId, id);
@@ -123,6 +129,25 @@ export class PostgresServiceRepository implements ServiceRepository {
       [tenantId, id]
     );
     return (res.rowCount ?? 0) > 0;
+  }
+
+  async reorder(tenantId: string, orderedIds: string[]): Promise<void> {
+    const client = await pool.connect();
+    try {
+      await client.query('BEGIN');
+      for (let i = 0; i < orderedIds.length; i++) {
+        await client.query(
+          'UPDATE services SET display_order = $1 WHERE tenant_id = $2 AND id = $3',
+          [i + 1, tenantId, orderedIds[i]]
+        );
+      }
+      await client.query('COMMIT');
+    } catch (err) {
+      await client.query('ROLLBACK');
+      throw err;
+    } finally {
+      client.release();
+    }
   }
 
   // ── Pricing Rules ───────────────────────────────────────────
@@ -182,6 +207,8 @@ export class PostgresServiceRepository implements ServiceRepository {
       tenantId: row.tenant_id,
       name: row.name,
       displayOrder: row.display_order,
+      description: row.description ?? null,
+      imageUrl: row.image_url ?? null,
     };
   }
 
@@ -194,6 +221,10 @@ export class PostgresServiceRepository implements ServiceRepository {
       description: row.description,
       baseDurationMin: row.base_duration_min,
       basePrice: parseFloat(row.base_price),
+      imageUrl: row.image_url ?? null,
+      isStartingPrice: row.is_starting_price ?? false,
+      petSizeApplicability: row.pet_size_applicability ?? 'all',
+      displayOrder: row.display_order ?? 0,
       isActive: row.is_active,
       createdAt: row.created_at,
     };

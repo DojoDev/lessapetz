@@ -6,4 +6,5 @@ export interface Service {
   duration: string;
   price: string;
   imageUrl?: string;
+  petSizeApplicability?: string;
 }

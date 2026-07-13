@@ -1,18 +1,9 @@
 import { cookies } from 'next/headers';
-import Link from 'next/link';
 import { verifyJwt } from '../../../infra/auth/jwt';
 import { PostgresAdminRepository } from '../../../infra/repositories/PostgresAdminRepository';
 import { PostgresBookingRepository } from '../../../infra/repositories/PostgresBookingRepository';
-import LogoutButton from '../LogoutButton';
+import AdminHeader from '../AdminHeader';
 import NewBookingButton from './NewBookingButton';
-
-// Utility para formatação de datas
-const getStartOfWeek = (date: Date) => {
-  const d = new Date(date);
-  const day = d.getDay();
-  const diff = d.getDate() - day + (day === 0 ? -6 : 1); // ajusta para segunda-feira
-  return new Date(d.setDate(diff));
-};
 
 export default async function AgendaPage() {
   const cookieStore = await cookies();
@@ -48,31 +39,7 @@ export default async function AgendaPage() {
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col">
-      <header className="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between sticky top-0 z-10">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-bold">
-            L
-          </div>
-          <h1 className="text-xl font-bold text-slate-800 tracking-tight">System Admin</h1>
-        </div>
-        
-        <div className="flex items-center gap-4">
-          <div className="text-sm text-slate-500 flex flex-col items-end">
-            <span className="font-medium text-slate-700">{adminData?.email}</span>
-            <span className="text-xs">{adminData?.role === 'root' ? 'Root Administrator' : 'Administrator'}</span>
-          </div>
-          <LogoutButton />
-        </div>
-      </header>
-
-      <div className="bg-white border-b border-slate-200 px-6 flex gap-6 text-sm font-medium sticky top-[73px] z-10">
-        <Link href="/admin" className="py-3 border-b-2 border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300 transition-colors">
-          Visão Geral
-        </Link>
-        <Link href="/admin/agenda" className="py-3 border-b-2 border-indigo-600 text-indigo-600">
-          Agenda
-        </Link>
-      </div>
+      <AdminHeader email={adminData?.email} role={adminData?.role} activeTab="agenda" />
 
       <main className="flex-1 w-full mx-auto p-6 md:p-8 overflow-hidden flex flex-col h-[calc(100vh-120px)]">
         <div className="mb-6 flex justify-between items-end shrink-0">
