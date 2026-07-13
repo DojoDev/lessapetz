@@ -17,6 +17,7 @@ export interface ServiceRepository {
   create(tenantId: string, data: Omit<PetService, 'id' | 'tenantId' | 'createdAt'>): Promise<PetService>;
   update(tenantId: string, id: string, data: Partial<PetService>): Promise<PetService | null>;
   delete(tenantId: string, id: string): Promise<boolean>;
+  reorder(tenantId: string, orderedIds: string[]): Promise<void>;
 
   // Pricing Rules
   findPricingRules(serviceId: string): Promise<ServicePricingRule[]>;
@@ -24,3 +25,4 @@ export interface ServiceRepository {
   updatePricingRule(id: string, data: Partial<ServicePricingRule>): Promise<ServicePricingRule | null>;
   deletePricingRule(id: string): Promise<boolean>;
 }
+

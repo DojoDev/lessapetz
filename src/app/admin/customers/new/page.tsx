@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import AdminHeader from '../../AdminHeader';
 
 export default function NewCustomerPage() {
   const router = useRouter();
@@ -48,14 +49,7 @@ export default function NewCustomerPage() {
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col">
-      <header className="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between sticky top-0 z-10">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-bold">
-            L
-          </div>
-          <h1 className="text-xl font-bold text-slate-800 tracking-tight">System Admin</h1>
-        </div>
-      </header>
+      <AdminHeader activeTab="customers" />
 
       <main className="flex-1 max-w-3xl w-full mx-auto p-6 md:p-8">
         <div className="mb-8 flex items-center gap-4">
@@ -83,7 +77,7 @@ export default function NewCustomerPage() {
                 required
                 value={formData.fullName}
                 onChange={e => setFormData({ ...formData, fullName: e.target.value })}
-                className="w-full px-4 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
+                className="w-full px-4 py-3 min-h-[44px] rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
               />
             </div>
             
@@ -91,9 +85,10 @@ export default function NewCustomerPage() {
               <label className="block text-sm font-medium text-slate-700 mb-2">CPF</label>
               <input
                 type="text"
+                inputMode="numeric"
                 value={formData.cpf}
                 onChange={e => setFormData({ ...formData, cpf: e.target.value })}
-                className="w-full px-4 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
+                className="w-full px-4 py-3 min-h-[44px] rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
                 placeholder="000.000.000-00"
               />
             </div>
@@ -101,11 +96,12 @@ export default function NewCustomerPage() {
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-2">Telefone *</label>
               <input
-                type="text"
+                type="tel"
+                inputMode="tel"
                 required
                 value={formData.phone}
                 onChange={e => setFormData({ ...formData, phone: e.target.value })}
-                className="w-full px-4 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
+                className="w-full px-4 py-3 min-h-[44px] rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
               />
             </div>
 
@@ -113,9 +109,10 @@ export default function NewCustomerPage() {
               <label className="block text-sm font-medium text-slate-700 mb-2">E-mail</label>
               <input
                 type="email"
+                inputMode="email"
                 value={formData.email}
                 onChange={e => setFormData({ ...formData, email: e.target.value })}
-                className="w-full px-4 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
+                className="w-full px-4 py-3 min-h-[44px] rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
               />
             </div>
 
@@ -127,9 +124,10 @@ export default function NewCustomerPage() {
               <label className="block text-sm font-medium text-slate-700 mb-2">CEP</label>
               <input
                 type="text"
+                inputMode="numeric"
                 value={formData.zipCode}
                 onChange={e => setFormData({ ...formData, zipCode: e.target.value })}
-                className="w-full px-4 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
+                className="w-full px-4 py-3 min-h-[44px] rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
               />
             </div>
 
@@ -139,7 +137,7 @@ export default function NewCustomerPage() {
                 type="text"
                 value={formData.street}
                 onChange={e => setFormData({ ...formData, street: e.target.value })}
-                className="w-full px-4 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
+                className="w-full px-4 py-3 min-h-[44px] rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
               />
             </div>
 
@@ -147,9 +145,10 @@ export default function NewCustomerPage() {
               <label className="block text-sm font-medium text-slate-700 mb-2">Número</label>
               <input
                 type="text"
+                inputMode="numeric"
                 value={formData.number}
                 onChange={e => setFormData({ ...formData, number: e.target.value })}
-                className="w-full px-4 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
+                className="w-full px-4 py-3 min-h-[44px] rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
               />
             </div>
 
@@ -159,7 +158,7 @@ export default function NewCustomerPage() {
                 type="text"
                 value={formData.neighborhood}
                 onChange={e => setFormData({ ...formData, neighborhood: e.target.value })}
-                className="w-full px-4 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
+                className="w-full px-4 py-3 min-h-[44px] rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
               />
             </div>
 
@@ -169,7 +168,7 @@ export default function NewCustomerPage() {
                 type="text"
                 value={formData.city}
                 onChange={e => setFormData({ ...formData, city: e.target.value })}
-                className="w-full px-4 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
+                className="w-full px-4 py-3 min-h-[44px] rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
               />
             </div>
           </div>
@@ -178,7 +177,7 @@ export default function NewCustomerPage() {
             <button
               type="submit"
               disabled={loading}
-              className="px-6 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-medium rounded-lg shadow-sm transition-colors disabled:opacity-50"
+              className="w-full sm:w-auto px-6 py-3 min-h-[44px] bg-indigo-600 hover:bg-indigo-500 text-white font-medium rounded-lg shadow-sm transition-colors disabled:opacity-50"
             >
               {loading ? 'Salvando...' : 'Salvar Cliente'}
             </button>

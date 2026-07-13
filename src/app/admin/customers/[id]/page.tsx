@@ -10,6 +10,7 @@ import LogoutButton from '../../LogoutButton';
 // Note: In a real app we'd break this into smaller client components, 
 // but we'll use a single server component for simplicity and add a client form later if needed.
 import AddPetForm from './AddPetForm';
+import AdminHeader from '../../AdminHeader';
 
 export default async function CustomerDetailsPage({ params }: { params: Promise<{ id: string }> }) {
   const cookieStore = await cookies();
@@ -51,15 +52,7 @@ export default async function CustomerDetailsPage({ params }: { params: Promise<
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col">
-      <header className="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between sticky top-0 z-10">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-bold">
-            L
-          </div>
-          <h1 className="text-xl font-bold text-slate-800 tracking-tight">System Admin</h1>
-        </div>
-        <LogoutButton />
-      </header>
+      <AdminHeader email={adminData?.email} role={adminData?.role} activeTab="customers" />
 
       <main className="flex-1 max-w-5xl w-full mx-auto p-6 md:p-8">
         <div className="mb-8 flex items-center gap-4">

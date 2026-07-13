@@ -5,14 +5,14 @@ import FAQAccordion from "@/presentation/components/FAQAccordion";
 import Footer from "@/presentation/components/Footer";
 import BookingModalContainer from "@/presentation/components/BookingModalContainer";
 
-import { StaticCatalogRepository } from "@/infra/repositories/StaticCatalogRepository";
+import { PostgresCatalogRepository } from "@/infra/repositories/PostgresCatalogRepository";
 import { StaticFAQRepository } from "@/infra/repositories/StaticFAQRepository";
 import { GetCatalog } from "@/usecases/GetCatalog";
 import { GetFAQs } from "@/usecases/GetFAQs";
 
 export default async function Home() {
   // Instantiate concrete repositories (Infra Layer)
-  const catalogRepo = new StaticCatalogRepository();
+  const catalogRepo = new PostgresCatalogRepository();
   const faqRepo = new StaticFAQRepository();
 
   // Instantiate Use Cases (Use Cases Layer)

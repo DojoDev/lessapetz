@@ -3,4 +3,6 @@ export interface ServiceCategory {
   tenantId: string;
   name: string;
   displayOrder: number;
+  description: string | null;
+  imageUrl: string | null;
 }
