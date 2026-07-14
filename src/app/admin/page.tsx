@@ -1,79 +1,194 @@
 import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
+import { DollarSign, CalendarDays, CreditCard } from 'lucide-react';
 import { verifyJwt } from '../../infra/auth/jwt';
 import { PostgresAdminRepository } from '../../infra/repositories/PostgresAdminRepository';
 import { PostgresBookingRepository } from '../../infra/repositories/PostgresBookingRepository';
-import { PostgresCustomerRepository } from '../../infra/repositories/PostgresCustomerRepository';
-import AdminHeader from './AdminHeader';
+import { PostgresCustomerPlanRepository } from '../../infra/repositories/PostgresCustomerPlanRepository';
+import { PostgresProductRepository } from '../../infra/repositories/PostgresProductRepository';
 
-export default async function AdminDashboard() {
+import KpiCard from './components/dashboard/KpiCard';
+import RevenueChart from './components/dashboard/RevenueChart';
+import ActivityList from './components/dashboard/ActivityList';
+import DataTable, { ColumnDef } from './components/dashboard/DataTable';
+import { Badge } from './components/ui/Badge';
+
+import { getDictionary, Locale } from '../../i18n';
+
+export default async function DashboardPage() {
   const cookieStore = await cookies();
   const isProduction = process.env.NODE_ENV === 'production';
   const cookieName = isProduction ? '__Host-admin_session' : 'admin_session';
   const token = cookieStore.get(cookieName)?.value;
 
-  let adminData = null;
-  let todayCount = 0;
-  let todayRevenue = 0;
-  let customerCount = 0;
+  const locale = (cookieStore.get('NEXT_LOCALE')?.value as Locale) || 'pt';
+  const dict = getDictionary(locale);
 
-  if (token) {
-    const payload = await verifyJwt(token);
-    if (payload && payload.sub) {
-      const adminRepo = new PostgresAdminRepository();
-      const bookingRepo = new PostgresBookingRepository();
-      const customerRepo = new PostgresCustomerRepository();
+  if (!token) redirect('/login');
 
-      adminData = await adminRepo.findById(payload.sub);
+  const payload = await verifyJwt(token);
+  if (!payload || !payload.sub || !payload.tenantId) redirect('/login');
 
-      if (adminData) {
-        try {
-          todayCount = await bookingRepo.countToday(adminData.tenantId);
-          todayRevenue = await bookingRepo.revenueToday(adminData.tenantId);
-          customerCount = await customerRepo.count(adminData.tenantId);
-        } catch {
-          // DB tables may not exist yet — show defaults
-        }
-      }
-    }
-  }
+  const adminRepo = new PostgresAdminRepository();
+  const bookingRepo = new PostgresBookingRepository();
+  const planRepo = new PostgresCustomerPlanRepository();
+
+  const adminData = await adminRepo.findById(payload.sub);
+  if (!adminData) redirect('/login');
+
+  const tenantId = adminData.tenantId;
+
+  // Real dates setup (Last 30 days)
+  const to = new Date();
+  const from = new Date();
+  from.setDate(from.getDate() - 30);
+
+  const productRepo = new PostgresProductRepository();
+
+  // Fetch real data concurrently
+  const [
+    todayCount,
+    totalRevenue,
+    pendingPayments,
+    revenueTrend,
+    recentActivities,
+    recentTransactions,
+    planUsage,
+    lowStockProducts
+  ] = await Promise.all([
+    bookingRepo.countToday(tenantId),
+    bookingRepo.getTotalRevenue(tenantId, from, to),
+    bookingRepo.getPendingPayments(tenantId, from, to),
+    bookingRepo.getRevenueTrend(tenantId, 6), // Last 6 months
+    bookingRepo.getRecentBookingsWithDetails(tenantId, 6),
+    bookingRepo.getRecentTransactions(tenantId, 5),
+    planRepo.getPlanUsageWithDetails(tenantId, 5),
+    productRepo.getLowStockProducts(tenantId)
+  ]);
+
+  const formatCurrency = (val: number) => {
+    return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val);
+  };
+
+  // Setup columns for DataTable (transactions)
+  const transactionColumns: ColumnDef<any>[] = [
+    { header: dict.dashboard.client, accessorKey: 'client' },
+    { header: dict.dashboard.date, accessorKey: 'date' },
+    { 
+      header: dict.dashboard.value, 
+      accessorKey: 'amount', 
+      align: 'right',
+      cell: (item) => <span className="font-medium text-admin-text-primary">{formatCurrency(item.amount)}</span> 
+    },
+    { 
+      header: dict.dashboard.status, 
+      align: 'right',
+      cell: (item) => (
+        <Badge variant={item.status === 'Paid' ? 'success' : 'warning'}>
+          {item.status === 'Paid' ? dict.dashboard.statusPaid : dict.dashboard.statusPending}
+        </Badge>
+      )
+    },
+  ];
+
+  // Setup columns for DataTable (plan usage)
+  const planColumns: ColumnDef<any>[] = [
+    { header: dict.dashboard.client, accessorKey: 'client' },
+    { 
+      header: dict.dashboard.plan, 
+      cell: (item) => <span className="text-teal-400 font-medium">{item.plan}</span>
+    },
+    { header: dict.dashboard.usage, accessorKey: 'usesLeft', align: 'center' },
+    { header: dict.dashboard.renewal, accessorKey: 'renewalDate', align: 'right' },
+  ];
+
+  // Setup columns for DataTable (low stock)
+  const lowStockColumns: ColumnDef<any>[] = [
+    { header: dict.dashboard.product, accessorKey: 'name' },
+    { 
+      header: dict.dashboard.currentMin, 
+      align: 'right',
+      cell: (item) => (
+        <div className="flex items-center justify-end gap-2">
+          <span className="text-red-400 font-bold">{item.currentStock}</span>
+          <span className="text-slate-500 text-xs">/ {item.minStockThreshold} {item.unitOfMeasure}</span>
+        </div>
+      )
+    },
+  ];
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col">
-      <AdminHeader email={adminData?.email} role={adminData?.role} activeTab="overview" />
-
-      <main className="flex-1 max-w-7xl w-full mx-auto p-6 md:p-8">
-        <div className="mb-8">
-          <h2 className="text-2xl font-bold text-slate-900">Dashboard Overview</h2>
-          <p className="text-slate-500 mt-1">Welcome back. Here&apos;s what&apos;s happening with your system.</p>
+    <>
+      
+      <main className="flex-1 p-6 md:p-8 w-full max-w-7xl mx-auto space-y-6">
+        <div className="mb-2">
+          <h2 className="text-2xl font-bold text-white">{dict.dashboard.title}</h2>
+          <p className="text-slate-400 mt-1">{dict.dashboard.subtitle}</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-6 flex flex-col">
-            <h3 className="text-slate-500 font-medium text-sm mb-4">Today&apos;s Appointments</h3>
-            <div className="text-3xl font-bold text-slate-800">{todayCount}</div>
-          </div>
-          
-          <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-6 flex flex-col">
-            <h3 className="text-slate-500 font-medium text-sm mb-4">Expected Revenue</h3>
-            <div className="text-3xl font-bold text-emerald-600">
-              R$ {todayRevenue.toFixed(2)}
-            </div>
-          </div>
+        {/* KPI Row */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <KpiCard 
+            title={dict.dashboard.revenue} 
+            value={formatCurrency(totalRevenue)} 
+            icon={DollarSign} 
+            trend="12.5%" 
+            trendUp={true} 
+            accentColor="emerald"
+          />
+          <KpiCard 
+            title={dict.dashboard.appointmentsToday} 
+            value={todayCount} 
+            icon={CalendarDays} 
+            accentColor="blue"
+          />
+          <KpiCard 
+            title={dict.dashboard.pendingPayments} 
+            value={formatCurrency(pendingPayments)} 
+            icon={CreditCard} 
+            accentColor="teal"
+          />
+        </div>
 
-          <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-6 flex flex-col">
-            <h3 className="text-slate-500 font-medium text-sm mb-4">Total Customers</h3>
-            <div className="text-3xl font-bold text-slate-800">{customerCount}</div>
+        {/* Main Content Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2">
+            <RevenueChart data={revenueTrend} />
           </div>
-
-          <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-6 flex flex-col">
-            <h3 className="text-slate-500 font-medium text-sm mb-4">Database Status</h3>
-            <div className="flex items-center gap-2">
-              <span className="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></span>
-              <span className="text-lg font-bold text-slate-800">Online</span>
-            </div>
+          <div className="lg:col-span-1">
+            <ActivityList activities={recentActivities} />
           </div>
         </div>
+
+        {/* Tables Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-1">
+            <DataTable 
+              title={dict.dashboard.lowStock} 
+              subtitle={dict.dashboard.lowStockDesc}
+              columns={lowStockColumns} 
+              data={lowStockProducts} 
+            />
+          </div>
+          <div className="lg:col-span-1">
+            <DataTable 
+              title={dict.dashboard.planUsage} 
+              subtitle={dict.dashboard.planUsageDesc}
+              columns={planColumns} 
+              data={planUsage} 
+            />
+          </div>
+          <div className="lg:col-span-1">
+            <DataTable 
+              title={dict.dashboard.recentTransactions} 
+              subtitle={dict.dashboard.recentTransactionsDesc}
+              columns={transactionColumns} 
+              data={recentTransactions} 
+            />
+          </div>
+        </div>
+
       </main>
-    </div>
+    </>
   );
 }

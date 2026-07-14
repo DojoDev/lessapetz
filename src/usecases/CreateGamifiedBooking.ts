@@ -83,6 +83,7 @@ export class CreateGamifiedBooking {
       customerId: existingCustomer.id,
       petId: newPet.id,
       serviceId: booking.serviceId,
+      customerPlanId: null,
       employeeId: null, // to be assigned
       startAt: booking.startAt,
       endAt: new Date(booking.startAt.getTime() + 60 * 60000), // default 1h

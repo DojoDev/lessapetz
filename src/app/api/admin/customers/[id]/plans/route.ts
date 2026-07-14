@@ -28,8 +28,15 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     const plan = await planRepo.create(tenantId, {
       customerId,
       petId: body.petId || null,
+      catalogPlanId: body.catalogPlanId || null,
       planName: body.planName,
       validUntil,
+      status: 'active',
+      cycleStartDate: new Date(),
+      cycleEndDate: validUntil,
+      totalQuota: body.totalQuota || 0,
+      usesConsumed: 0,
+      autoRenew: body.autoRenew ?? false,
     });
 
     return NextResponse.json(plan, { status: 201 });

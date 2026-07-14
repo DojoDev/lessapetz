@@ -1,16 +1,26 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { headers } from 'next/headers';
 import { writeFile, mkdir } from 'fs/promises';
 import { join } from 'path';
 import { randomUUID } from 'crypto';
+
+import { verifyJwt } from '../../../../infra/auth/jwt';
+
+async function getTenantId(req: NextRequest) {
+  const isProduction = process.env.NODE_ENV === 'production';
+  const cookieName = isProduction ? '__Host-admin_session' : 'admin_session';
+  const token = req.cookies.get(cookieName)?.value;
+  if (!token) return null;
+  const payload = await verifyJwt(token);
+  return payload?.tenantId || null;
+}
+
 
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
 export async function POST(request: NextRequest) {
   try {
-    const headersList = await headers();
-    const tenantId = headersList.get('x-tenant-id');
+    const tenantId = await getTenantId(request);
     if (!tenantId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
     const formData = await request.formData();

@@ -53,7 +53,7 @@ export default function AddPetForm({ customerId }: { customerId: string }) {
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">Nome *</label>
+          <label className="block text-sm font-medium text-slate-300 mb-1">Nome *</label>
           <input
             type="text" required
             value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})}
@@ -61,10 +61,10 @@ export default function AddPetForm({ customerId }: { customerId: string }) {
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">Espécie *</label>
+          <label className="block text-sm font-medium text-slate-300 mb-1">Espécie *</label>
           <select
             value={formData.species} onChange={e => setFormData({...formData, species: e.target.value})}
-            className="w-full px-4 py-3 min-h-[44px] border rounded-lg text-sm bg-white"
+            className="w-full px-4 py-3 min-h-[44px] border rounded-lg text-sm bg-slate-900"
           >
             <option value="dog">Cachorro</option>
             <option value="cat">Gato</option>
@@ -72,7 +72,7 @@ export default function AddPetForm({ customerId }: { customerId: string }) {
           </select>
         </div>
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">Raça</label>
+          <label className="block text-sm font-medium text-slate-300 mb-1">Raça</label>
           <input
             type="text"
             value={formData.breed} onChange={e => setFormData({...formData, breed: e.target.value})}
@@ -80,10 +80,10 @@ export default function AddPetForm({ customerId }: { customerId: string }) {
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">Porte *</label>
+          <label className="block text-sm font-medium text-slate-300 mb-1">Porte *</label>
           <select
             value={formData.sizeCategory} onChange={e => setFormData({...formData, sizeCategory: e.target.value})}
-            className="w-full px-4 py-3 min-h-[44px] border rounded-lg text-sm bg-white"
+            className="w-full px-4 py-3 min-h-[44px] border rounded-lg text-sm bg-slate-900"
           >
             <option value="small">Pequeno</option>
             <option value="medium">Médio</option>
@@ -92,7 +92,7 @@ export default function AddPetForm({ customerId }: { customerId: string }) {
           </select>
         </div>
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">Peso (kg)</label>
+          <label className="block text-sm font-medium text-slate-300 mb-1">Peso (kg)</label>
           <input
             type="number" step="0.1" inputMode="decimal"
             value={formData.weight} onChange={e => setFormData({...formData, weight: e.target.value})}
@@ -100,10 +100,10 @@ export default function AddPetForm({ customerId }: { customerId: string }) {
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">Comportamento</label>
+          <label className="block text-sm font-medium text-slate-300 mb-1">Comportamento</label>
           <select
             value={formData.behavior} onChange={e => setFormData({...formData, behavior: e.target.value})}
-            className="w-full px-4 py-3 min-h-[44px] border rounded-lg text-sm bg-white"
+            className="w-full px-4 py-3 min-h-[44px] border rounded-lg text-sm bg-slate-900"
           >
             <option value="">(Não informado)</option>
             <option value="calm">Calmo</option>
@@ -113,7 +113,7 @@ export default function AddPetForm({ customerId }: { customerId: string }) {
           </select>
         </div>
         <div className="md:col-span-2 lg:col-span-3">
-          <label className="block text-sm font-medium text-slate-700 mb-1">Observações de Saúde (Alergias, etc)</label>
+          <label className="block text-sm font-medium text-slate-300 mb-1">Observações de Saúde (Alergias, etc)</label>
           <input
             type="text"
             value={formData.healthNotes} onChange={e => setFormData({...formData, healthNotes: e.target.value})}

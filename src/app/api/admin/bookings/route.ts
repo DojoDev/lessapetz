@@ -25,19 +25,35 @@ export async function POST(req: NextRequest) {
     // Check if covered by plan
     let paymentStatus = body.paymentStatus || 'pending';
     let totalPrice = body.totalPrice || 0;
+    let customerPlanId = null;
 
     if (body.usePlan) {
-      const activePlans = await planRepo.findActiveByPetId(tenantId, body.petId);
-      if (activePlans.length > 0) {
-        paymentStatus = 'covered_by_plan';
-        totalPrice = 0;
+      // Validate that a plan covering this specific service exists
+      const matchingPlans = await planRepo.findActiveByPetIdAndService(tenantId, body.petId, body.serviceId);
+      const targetPlan = body.customerPlanId 
+        ? matchingPlans.find(p => p.id === body.customerPlanId) 
+        : matchingPlans[0];
+
+      if (!targetPlan) {
+        return NextResponse.json({ error: 'Nenhum plano ativo cobre este serviço, ou quota já esgotada' }, { status: 400 });
       }
+
+      // Race-safe quota consumption
+      const consumed = await planRepo.consumeQuota(targetPlan.id);
+      if (!consumed) {
+        return NextResponse.json({ error: 'Quota do plano já esgotada (tentativa concorrente)' }, { status: 409 });
+      }
+
+      paymentStatus = 'covered_by_plan';
+      totalPrice = 0;
+      customerPlanId = targetPlan.id;
     }
 
     const booking = await bookingRepo.create(tenantId, {
       customerId: body.customerId,
       petId: body.petId,
       serviceId: body.serviceId,
+      customerPlanId: customerPlanId,
       employeeId: null, // Could be assigned later
       startAt: new Date(body.startAt),
       endAt: new Date(new Date(body.startAt).getTime() + (body.durationMin || 60) * 60000),
