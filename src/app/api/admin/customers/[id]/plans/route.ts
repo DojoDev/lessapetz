@@ -36,6 +36,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       cycleEndDate: validUntil,
       totalQuota: body.totalQuota || 0,
       usesConsumed: 0,
+      autoRenew: body.autoRenew ?? false,
     });
 
     return NextResponse.json(plan, { status: 201 });

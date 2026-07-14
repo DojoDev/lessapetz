@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import AdminHeader from '../../AdminHeader';
 
 export default function NewCustomerPage() {
   const router = useRouter();
@@ -48,17 +47,16 @@ export default function NewCustomerPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col">
-      <AdminHeader activeTab="customers" />
-
+    <>
+      
       <main className="flex-1 max-w-3xl w-full mx-auto p-6 md:p-8">
         <div className="mb-8 flex items-center gap-4">
-          <Link href="/admin/customers" className="text-slate-500 hover:text-slate-800 transition-colors">
+          <Link href="/admin/customers" className="text-slate-400 hover:text-slate-800 transition-colors">
             &larr; Voltar
           </Link>
           <div>
-            <h2 className="text-2xl font-bold text-slate-900">Novo Cliente</h2>
-            <p className="text-slate-500 mt-1">Preencha os dados do novo cliente.</p>
+            <h2 className="text-2xl font-bold text-white">Novo Cliente</h2>
+            <p className="text-slate-400 mt-1">Preencha os dados do novo cliente.</p>
           </div>
         </div>
 
@@ -68,122 +66,122 @@ export default function NewCustomerPage() {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 space-y-6">
+        <form onSubmit={handleSubmit} className="bg-slate-900 rounded-xl shadow-sm border border-slate-800 p-6 space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-slate-700 mb-2">Nome Completo *</label>
+              <label className="block text-sm font-medium text-slate-300 mb-2">Nome Completo *</label>
               <input
                 type="text"
                 required
                 value={formData.fullName}
                 onChange={e => setFormData({ ...formData, fullName: e.target.value })}
-                className="w-full px-4 py-3 min-h-[44px] rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
+                className="w-full px-4 py-3 min-h-[44px] rounded-lg border border-slate-700 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none transition-all"
               />
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">CPF</label>
+              <label className="block text-sm font-medium text-slate-300 mb-2">CPF</label>
               <input
                 type="text"
                 inputMode="numeric"
                 value={formData.cpf}
                 onChange={e => setFormData({ ...formData, cpf: e.target.value })}
-                className="w-full px-4 py-3 min-h-[44px] rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
+                className="w-full px-4 py-3 min-h-[44px] rounded-lg border border-slate-700 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none transition-all"
                 placeholder="000.000.000-00"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">Telefone *</label>
+              <label className="block text-sm font-medium text-slate-300 mb-2">Telefone *</label>
               <input
                 type="tel"
                 inputMode="tel"
                 required
                 value={formData.phone}
                 onChange={e => setFormData({ ...formData, phone: e.target.value })}
-                className="w-full px-4 py-3 min-h-[44px] rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
+                className="w-full px-4 py-3 min-h-[44px] rounded-lg border border-slate-700 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none transition-all"
               />
             </div>
 
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-slate-700 mb-2">E-mail</label>
+              <label className="block text-sm font-medium text-slate-300 mb-2">E-mail</label>
               <input
                 type="email"
                 inputMode="email"
                 value={formData.email}
                 onChange={e => setFormData({ ...formData, email: e.target.value })}
-                className="w-full px-4 py-3 min-h-[44px] rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
+                className="w-full px-4 py-3 min-h-[44px] rounded-lg border border-slate-700 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none transition-all"
               />
             </div>
 
             <div className="md:col-span-2 mt-4">
-              <h3 className="text-lg font-medium text-slate-900 border-b pb-2 mb-4">Endereço</h3>
+              <h3 className="text-lg font-medium text-white border-b pb-2 mb-4">Endereço</h3>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">CEP</label>
+              <label className="block text-sm font-medium text-slate-300 mb-2">CEP</label>
               <input
                 type="text"
                 inputMode="numeric"
                 value={formData.zipCode}
                 onChange={e => setFormData({ ...formData, zipCode: e.target.value })}
-                className="w-full px-4 py-3 min-h-[44px] rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
+                className="w-full px-4 py-3 min-h-[44px] rounded-lg border border-slate-700 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none transition-all"
               />
             </div>
 
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-slate-700 mb-2">Rua / Logradouro</label>
+              <label className="block text-sm font-medium text-slate-300 mb-2">Rua / Logradouro</label>
               <input
                 type="text"
                 value={formData.street}
                 onChange={e => setFormData({ ...formData, street: e.target.value })}
-                className="w-full px-4 py-3 min-h-[44px] rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
+                className="w-full px-4 py-3 min-h-[44px] rounded-lg border border-slate-700 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none transition-all"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">Número</label>
+              <label className="block text-sm font-medium text-slate-300 mb-2">Número</label>
               <input
                 type="text"
                 inputMode="numeric"
                 value={formData.number}
                 onChange={e => setFormData({ ...formData, number: e.target.value })}
-                className="w-full px-4 py-3 min-h-[44px] rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
+                className="w-full px-4 py-3 min-h-[44px] rounded-lg border border-slate-700 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none transition-all"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">Bairro</label>
+              <label className="block text-sm font-medium text-slate-300 mb-2">Bairro</label>
               <input
                 type="text"
                 value={formData.neighborhood}
                 onChange={e => setFormData({ ...formData, neighborhood: e.target.value })}
-                className="w-full px-4 py-3 min-h-[44px] rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
+                className="w-full px-4 py-3 min-h-[44px] rounded-lg border border-slate-700 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none transition-all"
               />
             </div>
 
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-slate-700 mb-2">Cidade</label>
+              <label className="block text-sm font-medium text-slate-300 mb-2">Cidade</label>
               <input
                 type="text"
                 value={formData.city}
                 onChange={e => setFormData({ ...formData, city: e.target.value })}
-                className="w-full px-4 py-3 min-h-[44px] rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
+                className="w-full px-4 py-3 min-h-[44px] rounded-lg border border-slate-700 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none transition-all"
               />
             </div>
           </div>
 
-          <div className="pt-6 border-t border-slate-200 flex justify-end">
+          <div className="pt-6 border-t border-slate-800 flex justify-end">
             <button
               type="submit"
               disabled={loading}
-              className="w-full sm:w-auto px-6 py-3 min-h-[44px] bg-indigo-600 hover:bg-indigo-500 text-white font-medium rounded-lg shadow-sm transition-colors disabled:opacity-50"
+              className="w-full sm:w-auto px-6 py-3 min-h-[44px] bg-teal-500 hover:bg-teal-400 text-white font-medium rounded-lg shadow-sm transition-colors disabled:opacity-50"
             >
               {loading ? 'Salvando...' : 'Salvar Cliente'}
             </button>
           </div>
         </form>
       </main>
-    </div>
+    </>
   );
 }

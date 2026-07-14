@@ -28,21 +28,25 @@ export async function POST(req: NextRequest) {
     let customerPlanId = null;
 
     if (body.usePlan) {
-      const activePlans = await planRepo.findActiveByPetId(tenantId, body.petId);
+      // Validate that a plan covering this specific service exists
+      const matchingPlans = await planRepo.findActiveByPetIdAndService(tenantId, body.petId, body.serviceId);
       const targetPlan = body.customerPlanId 
-        ? activePlans.find(p => p.id === body.customerPlanId) 
-        : activePlans[0];
+        ? matchingPlans.find(p => p.id === body.customerPlanId) 
+        : matchingPlans[0];
 
-      if (targetPlan && targetPlan.usesConsumed < targetPlan.totalQuota) {
-        paymentStatus = 'covered_by_plan';
-        totalPrice = 0;
-        customerPlanId = targetPlan.id;
-        
-        // Consume quota
-        await planRepo.consumeQuota(targetPlan.id);
-      } else {
-        return NextResponse.json({ error: 'Plano inválido, expirado ou quota excedida' }, { status: 400 });
+      if (!targetPlan) {
+        return NextResponse.json({ error: 'Nenhum plano ativo cobre este serviço, ou quota já esgotada' }, { status: 400 });
       }
+
+      // Race-safe quota consumption
+      const consumed = await planRepo.consumeQuota(targetPlan.id);
+      if (!consumed) {
+        return NextResponse.json({ error: 'Quota do plano já esgotada (tentativa concorrente)' }, { status: 409 });
+      }
+
+      paymentStatus = 'covered_by_plan';
+      totalPrice = 0;
+      customerPlanId = targetPlan.id;
     }
 
     const booking = await bookingRepo.create(tenantId, {

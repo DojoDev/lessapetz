@@ -40,7 +40,7 @@ export default function GamifiedBookingForm({ services }: Props) {
         },
       };
 
-      const res = await fetch("/api/agendamento", {
+      const res = await fetch("/api/booking", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),

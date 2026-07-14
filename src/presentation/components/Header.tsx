@@ -60,7 +60,7 @@ export default function Header({ hideBookingButton = false }: HeaderProps) {
           {!hideBookingButton && (
             <div className="mt-8 flex flex-col sm:flex-row justify-center gap-4">
               <a
-                href="/agendamento"
+                href="/booking"
                 className="inline-flex items-center justify-center px-8 py-3.5 text-base font-medium text-white bg-brand-burgundy hover:bg-brand-burgundy-light rounded-full shadow-lg shadow-brand-burgundy/30 transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0"
               >
                 Agendar Horário / Cadastrar

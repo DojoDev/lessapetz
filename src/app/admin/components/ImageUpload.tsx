@@ -104,10 +104,10 @@ export default function ImageUpload({ currentImageUrl, onImageUploaded, folder =
         onClick={() => fileInputRef.current?.click()}
         className={`relative border-2 border-dashed rounded-xl cursor-pointer transition-all duration-200 overflow-hidden ${
           isDragging
-            ? 'border-indigo-400 bg-indigo-50'
+            ? 'border-indigo-400 bg-teal-500/10'
             : preview
-            ? 'border-slate-200 bg-slate-50'
-            : 'border-slate-300 bg-white hover:border-indigo-300 hover:bg-slate-50'
+            ? 'border-slate-800 bg-slate-900/50'
+            : 'border-slate-700 bg-slate-900 hover:border-indigo-300 hover:bg-slate-800/20'
         }`}
       >
         {preview ? (
@@ -129,14 +129,14 @@ export default function ImageUpload({ currentImageUrl, onImageUploaded, folder =
               <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5a1.5 1.5 0 001.5-1.5V5.25a1.5 1.5 0 00-1.5-1.5H3.75a1.5 1.5 0 00-1.5 1.5V19.5a1.5 1.5 0 001.5 1.5z" />
             </svg>
             {isUploading ? (
-              <div className="flex items-center gap-2 text-sm text-indigo-600">
+              <div className="flex items-center gap-2 text-sm text-teal-400">
                 <div className="w-4 h-4 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin" />
                 Enviando...
               </div>
             ) : (
               <>
-                <p className="text-sm font-medium text-slate-600">
-                  Arraste uma imagem ou <span className="text-indigo-600">clique para selecionar</span>
+                <p className="text-sm font-medium text-slate-300">
+                  Arraste uma imagem ou <span className="text-teal-400">clique para selecionar</span>
                 </p>
                 <p className="text-xs text-slate-400 mt-1">JPG, PNG ou WebP • Máx. 5MB</p>
               </>

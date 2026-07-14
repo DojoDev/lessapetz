@@ -170,7 +170,7 @@ export default function CardItem({ item, type, whatsAppUrl }: CardItemProps) {
 
           {isCourse ? (
             <Link
-              href={item.id === "crs-banhista-499" ? "/cursos/banhista" : "/cursos/banho-e-tosa-iniciante"}
+              href={item.id === "crs-banhista-499" ? "/courses/bather" : "/courses/grooming-beginner"}
               className="w-full flex items-center justify-center gap-2 py-3.5 px-4 rounded-xl font-semibold text-xs sm:text-sm shadow-sm transition-all duration-300 bg-brand-burgundy hover:bg-brand-burgundy-light text-white hover:shadow-brand-burgundy/15 hover:scale-[1.02] active:scale-[0.98]"
             >
               <svg className="w-4 h-4 fill-none stroke-current stroke-2" viewBox="0 0 24 24">

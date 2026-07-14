@@ -11,5 +11,6 @@ export interface CustomerPlan {
   cycleEndDate: Date;
   totalQuota: number;
   usesConsumed: number;
+  autoRenew: boolean;
   createdAt: Date;
 }

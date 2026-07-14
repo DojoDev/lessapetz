@@ -1,6 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { headers } from 'next/headers';
 import { PostgresServiceRepository } from '../../../../../infra/repositories/PostgresServiceRepository';
+
+import { verifyJwt } from '../../../../../infra/auth/jwt';
+
+async function getTenantId(req: NextRequest) {
+  const isProduction = process.env.NODE_ENV === 'production';
+  const cookieName = isProduction ? '__Host-admin_session' : 'admin_session';
+  const token = req.cookies.get(cookieName)?.value;
+  if (!token) return null;
+  const payload = await verifyJwt(token);
+  return payload?.tenantId || null;
+}
+
 
 const serviceRepo = new PostgresServiceRepository();
 
@@ -9,8 +20,7 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const headersList = await headers();
-    const tenantId = headersList.get('x-tenant-id');
+    const tenantId = await getTenantId(request);
     if (!tenantId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
     const { id } = await params;
@@ -39,8 +49,7 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const headersList = await headers();
-    const tenantId = headersList.get('x-tenant-id');
+    const tenantId = await getTenantId(request);
     if (!tenantId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
     const { id } = await params;
