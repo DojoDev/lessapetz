@@ -5,17 +5,24 @@ import { verifyJwt } from '../../infra/auth/jwt';
 import { PostgresAdminRepository } from '../../infra/repositories/PostgresAdminRepository';
 import { PostgresBookingRepository } from '../../infra/repositories/PostgresBookingRepository';
 import { PostgresCustomerPlanRepository } from '../../infra/repositories/PostgresCustomerPlanRepository';
+import { PostgresProductRepository } from '../../infra/repositories/PostgresProductRepository';
 
 import KpiCard from './components/dashboard/KpiCard';
 import RevenueChart from './components/dashboard/RevenueChart';
 import ActivityList from './components/dashboard/ActivityList';
 import DataTable, { ColumnDef } from './components/dashboard/DataTable';
+import { Badge } from './components/ui/Badge';
+
+import { getDictionary, Locale } from '../../i18n';
 
 export default async function DashboardPage() {
   const cookieStore = await cookies();
   const isProduction = process.env.NODE_ENV === 'production';
   const cookieName = isProduction ? '__Host-admin_session' : 'admin_session';
   const token = cookieStore.get(cookieName)?.value;
+
+  const locale = (cookieStore.get('NEXT_LOCALE')?.value as Locale) || 'pt';
+  const dict = getDictionary(locale);
 
   if (!token) redirect('/login');
 
@@ -36,6 +43,8 @@ export default async function DashboardPage() {
   const from = new Date();
   from.setDate(from.getDate() - 30);
 
+  const productRepo = new PostgresProductRepository();
+
   // Fetch real data concurrently
   const [
     todayCount,
@@ -44,7 +53,8 @@ export default async function DashboardPage() {
     revenueTrend,
     recentActivities,
     recentTransactions,
-    planUsage
+    planUsage,
+    lowStockProducts
   ] = await Promise.all([
     bookingRepo.countToday(tenantId),
     bookingRepo.getTotalRevenue(tenantId, from, to),
@@ -52,7 +62,8 @@ export default async function DashboardPage() {
     bookingRepo.getRevenueTrend(tenantId, 6), // Last 6 months
     bookingRepo.getRecentBookingsWithDetails(tenantId, 6),
     bookingRepo.getRecentTransactions(tenantId, 5),
-    planRepo.getPlanUsageWithDetails(tenantId, 5)
+    planRepo.getPlanUsageWithDetails(tenantId, 5),
+    productRepo.getLowStockProducts(tenantId)
   ]);
 
   const formatCurrency = (val: number) => {
@@ -61,36 +72,49 @@ export default async function DashboardPage() {
 
   // Setup columns for DataTable (transactions)
   const transactionColumns: ColumnDef<any>[] = [
-    { header: 'Cliente', accessorKey: 'client' },
-    { header: 'Data', accessorKey: 'date' },
+    { header: dict.dashboard.client, accessorKey: 'client' },
+    { header: dict.dashboard.date, accessorKey: 'date' },
     { 
-      header: 'Valor', 
+      header: dict.dashboard.value, 
       accessorKey: 'amount', 
       align: 'right',
-      cell: (item) => <span className="font-medium text-white">{formatCurrency(item.amount)}</span> 
+      cell: (item) => <span className="font-medium text-admin-text-primary">{formatCurrency(item.amount)}</span> 
     },
     { 
-      header: 'Status', 
+      header: dict.dashboard.status, 
       align: 'right',
       cell: (item) => (
-        <span className={`px-2 py-1 text-[11px] font-bold uppercase tracking-wider rounded-md ${
-          item.status === 'Paid' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-amber-500/10 text-amber-500'
-        }`}>
-          {item.status === 'Paid' ? 'Pago' : 'Pendente'}
-        </span>
+        <Badge variant={item.status === 'Paid' ? 'success' : 'warning'}>
+          {item.status === 'Paid' ? dict.dashboard.statusPaid : dict.dashboard.statusPending}
+        </Badge>
       )
     },
   ];
 
   // Setup columns for DataTable (plan usage)
   const planColumns: ColumnDef<any>[] = [
-    { header: 'Cliente', accessorKey: 'client' },
+    { header: dict.dashboard.client, accessorKey: 'client' },
     { 
-      header: 'Plano', 
+      header: dict.dashboard.plan, 
       cell: (item) => <span className="text-teal-400 font-medium">{item.plan}</span>
     },
-    { header: 'Uso', accessorKey: 'usesLeft', align: 'center' },
-    { header: 'Renovação', accessorKey: 'renewalDate', align: 'right' },
+    { header: dict.dashboard.usage, accessorKey: 'usesLeft', align: 'center' },
+    { header: dict.dashboard.renewal, accessorKey: 'renewalDate', align: 'right' },
+  ];
+
+  // Setup columns for DataTable (low stock)
+  const lowStockColumns: ColumnDef<any>[] = [
+    { header: dict.dashboard.product, accessorKey: 'name' },
+    { 
+      header: dict.dashboard.currentMin, 
+      align: 'right',
+      cell: (item) => (
+        <div className="flex items-center justify-end gap-2">
+          <span className="text-red-400 font-bold">{item.currentStock}</span>
+          <span className="text-slate-500 text-xs">/ {item.minStockThreshold} {item.unitOfMeasure}</span>
+        </div>
+      )
+    },
   ];
 
   return (
@@ -98,14 +122,14 @@ export default async function DashboardPage() {
       
       <main className="flex-1 p-6 md:p-8 w-full max-w-7xl mx-auto space-y-6">
         <div className="mb-2">
-          <h2 className="text-2xl font-bold text-white">Dashboard</h2>
-          <p className="text-slate-400 mt-1">Bem-vindo(a). Aqui está o resumo do sistema (Últimos 30 dias).</p>
+          <h2 className="text-2xl font-bold text-white">{dict.dashboard.title}</h2>
+          <p className="text-slate-400 mt-1">{dict.dashboard.subtitle}</p>
         </div>
 
         {/* KPI Row */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <KpiCard 
-            title="Receita Total (30d)" 
+            title={dict.dashboard.revenue} 
             value={formatCurrency(totalRevenue)} 
             icon={DollarSign} 
             trend="12.5%" 
@@ -113,13 +137,13 @@ export default async function DashboardPage() {
             accentColor="emerald"
           />
           <KpiCard 
-            title="Agendamentos Hoje" 
+            title={dict.dashboard.appointmentsToday} 
             value={todayCount} 
             icon={CalendarDays} 
             accentColor="blue"
           />
           <KpiCard 
-            title="Pagamentos Pendentes" 
+            title={dict.dashboard.pendingPayments} 
             value={formatCurrency(pendingPayments)} 
             icon={CreditCard} 
             accentColor="teal"
@@ -137,19 +161,31 @@ export default async function DashboardPage() {
         </div>
 
         {/* Tables Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <DataTable 
-            title="Transações Recentes" 
-            subtitle="Últimos pagamentos registrados"
-            columns={transactionColumns} 
-            data={recentTransactions} 
-          />
-          <DataTable 
-            title="Uso de Planos" 
-            subtitle="Assinaturas próximas da renovação"
-            columns={planColumns} 
-            data={planUsage} 
-          />
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-1">
+            <DataTable 
+              title={dict.dashboard.lowStock} 
+              subtitle={dict.dashboard.lowStockDesc}
+              columns={lowStockColumns} 
+              data={lowStockProducts} 
+            />
+          </div>
+          <div className="lg:col-span-1">
+            <DataTable 
+              title={dict.dashboard.planUsage} 
+              subtitle={dict.dashboard.planUsageDesc}
+              columns={planColumns} 
+              data={planUsage} 
+            />
+          </div>
+          <div className="lg:col-span-1">
+            <DataTable 
+              title={dict.dashboard.recentTransactions} 
+              subtitle={dict.dashboard.recentTransactionsDesc}
+              columns={transactionColumns} 
+              data={recentTransactions} 
+            />
+          </div>
         </div>
 
       </main>

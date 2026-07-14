@@ -10,6 +10,7 @@ export default function NewBookingModal({ onClose }: { onClose: () => void }) {
   
   const [customers, setCustomers] = useState<any[]>([]);
   const [services, setServices] = useState<any[]>([]);
+  const [catalogPlans, setCatalogPlans] = useState<any[]>([]);
   
   const [selectedCustomerId, setSelectedCustomerId] = useState('');
   const [selectedPetId, setSelectedPetId] = useState('');
@@ -18,13 +19,15 @@ export default function NewBookingModal({ onClose }: { onClose: () => void }) {
   const [paymentMethod, setPaymentMethod] = useState('');
 
   useEffect(() => {
-    // Fetch customers and services
+    // Fetch customers, services and catalog plans
     Promise.all([
       fetch('/api/admin/customers').then(r => r.json()),
-      fetch('/api/admin/services').then(r => r.json())
-    ]).then(([custData, servData]) => {
+      fetch('/api/admin/services').then(r => r.json()),
+      fetch('/api/admin/plans').then(r => r.json())
+    ]).then(([custData, servData, planData]) => {
       setCustomers(Array.isArray(custData) ? custData : []);
       setServices(Array.isArray(servData) ? servData : []);
+      setCatalogPlans(Array.isArray(planData) ? planData : []);
     }).catch(err => {
       console.error(err);
       setError('Erro ao carregar dados');
@@ -34,8 +37,17 @@ export default function NewBookingModal({ onClose }: { onClose: () => void }) {
   const selectedCustomer = customers.find(c => c.id === selectedCustomerId);
   const selectedPet = selectedCustomer?.pets?.find((p: any) => p.id === selectedPetId);
   const selectedService = services.find(s => s.id === selectedServiceId);
+  
+  // Find valid active plans for the selected pet
   const activePlans = selectedCustomer?.plans?.filter((p: any) => p.petId === selectedPetId && p.status === 'active' && p.usesConsumed < p.totalQuota && new Date(p.cycleEndDate) >= new Date()) || [];
-  const hasActivePlan = activePlans.length > 0;
+  
+  // Find which of these active plans actually cover the selected service
+  const plansCoveringService = activePlans.filter((activePlan: any) => {
+    const catalogPlan = catalogPlans.find((cp: any) => cp.id === activePlan.catalogPlanId);
+    return catalogPlan?.includedServiceIds?.includes(selectedServiceId);
+  });
+  
+  const hasActivePlanForService = plansCoveringService.length > 0;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -56,8 +68,8 @@ export default function NewBookingModal({ onClose }: { onClose: () => void }) {
           durationMin: selectedService.durationMin,
           totalPrice: selectedService.price,
           paymentMethod: paymentMethod || null,
-          usePlan: hasActivePlan, // Send flag if we want to use the plan
-          customerPlanId: hasActivePlan ? activePlans[0].id : null,
+          usePlan: hasActivePlanForService, // Send flag if we want to use the plan
+          customerPlanId: hasActivePlanForService ? plansCoveringService[0].id : null,
         }),
       });
 
@@ -124,9 +136,13 @@ export default function NewBookingModal({ onClose }: { onClose: () => void }) {
             {selectedPetId && (
               <div className="bg-slate-900/50 p-4 rounded-lg border border-slate-800">
                 <h4 className="text-sm font-medium text-white mb-2">Status do Pet</h4>
-                {hasActivePlan ? (
-                  <div className="flex items-center gap-2 text-emerald-700 text-sm font-medium bg-emerald-50 px-3 py-2 rounded-md border border-emerald-100">
-                    <span>✅ Plano Ativo: {activePlans[0].planName} ({activePlans[0].totalQuota - activePlans[0].usesConsumed} usos restantes)</span>
+                {activePlans.length > 0 ? (
+                  <div className="flex flex-col gap-2">
+                    {activePlans.map((ap: any) => (
+                      <div key={ap.id} className="flex items-center gap-2 text-admin-accent text-sm font-medium bg-admin-accent-muted px-3 py-2 rounded-md border border-admin-border">
+                        <span>✅ Plano Ativo: {ap.planName} ({ap.totalQuota - ap.usesConsumed} usos restantes)</span>
+                      </div>
+                    ))}
                   </div>
                 ) : (
                   <div className="text-sm text-slate-300">
@@ -164,7 +180,7 @@ export default function NewBookingModal({ onClose }: { onClose: () => void }) {
                   />
                 </div>
 
-                {!hasActivePlan && (
+                {!hasActivePlanForService && (
                   <div>
                     <label className="block text-sm font-medium text-slate-300 mb-1">Forma de Pagamento *</label>
                     <select 
@@ -182,13 +198,13 @@ export default function NewBookingModal({ onClose }: { onClose: () => void }) {
                   </div>
                 )}
                 
-                {hasActivePlan && selectedService && (
-                  <div className="p-3 bg-emerald-50 text-emerald-700 text-sm font-medium rounded-lg border border-emerald-200 flex justify-between">
+                {hasActivePlanForService && selectedService && (
+                  <div className="p-3 bg-emerald-500/10 text-emerald-400 text-sm font-medium rounded-lg border border-emerald-500/20 flex justify-between">
                     <span>Serviço coberto pelo plano</span>
                     <span>R$ 0,00</span>
                   </div>
                 )}
-                {!hasActivePlan && selectedService && (
+                {!hasActivePlanForService && selectedService && (
                   <div className="p-3 bg-slate-800/50 text-slate-300 text-sm font-medium rounded-lg border border-slate-800 flex justify-between">
                     <span>Valor a cobrar</span>
                     <span>R$ {selectedService.price}</span>

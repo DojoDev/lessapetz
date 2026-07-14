@@ -1,3 +1,7 @@
+import { Card, CardHeader } from '../ui/Card';
+import { Table, TableHeader, TableRow, TableHead, TableCell } from '../ui/Table';
+import { EmptyState } from '../ui/EmptyState';
+
 export interface ColumnDef<T> {
   header: string;
   accessorKey?: keyof T;
@@ -8,49 +12,54 @@ export interface ColumnDef<T> {
 interface DataTableProps<T> {
   title: string;
   subtitle?: string;
+  emptyTitle?: string;
+  emptySubtitle?: string;
   columns: ColumnDef<T>[];
   data: T[];
 }
 
-export default function DataTable<T extends { id: string | number }>({ title, subtitle, columns, data }: DataTableProps<T>) {
+export default function DataTable<T extends { id: string | number }>({ title, subtitle, emptyTitle, emptySubtitle, columns, data }: DataTableProps<T>) {
+
   return (
-    <div className="bg-slate-900 border border-slate-800 rounded-2xl shadow-sm overflow-hidden flex flex-col h-full">
-      <div className="p-6 border-b border-slate-800">
-        <h3 className="text-lg font-bold text-white">{title}</h3>
-        {subtitle && <p className="text-slate-400 text-sm mt-1">{subtitle}</p>}
-      </div>
+    <Card noPadding className="flex flex-col h-full">
+      <CardHeader>
+        <div>
+          <h3 className="text-lg font-bold text-admin-text-primary">{title}</h3>
+          {subtitle && <p className="text-admin-text-muted text-sm mt-1">{subtitle}</p>}
+        </div>
+      </CardHeader>
       
-      <div className="overflow-x-auto">
-        <table className="w-full text-sm text-left">
-          <thead className="text-xs text-slate-400 bg-slate-900/50 border-b border-slate-800">
+      {data.length === 0 ? (
+        <div className="p-6">
+          <EmptyState 
+            title={emptyTitle || "Nenhum registro"} 
+            description={emptySubtitle || "Não encontramos dados para exibir aqui."}
+          />
+        </div>
+      ) : (
+        <Table>
+          <TableHeader>
             <tr>
               {columns.map((col, i) => (
-                <th key={i} className={`px-6 py-4 font-medium uppercase tracking-wider ${col.align === 'right' ? 'text-right' : col.align === 'center' ? 'text-center' : 'text-left'}`}>
+                <TableHead key={i} align={col.align || 'left'}>
                   {col.header}
-                </th>
+                </TableHead>
               ))}
             </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-800/50">
+          </TableHeader>
+          <tbody className="divide-y divide-admin-border/50">
             {data.map((item) => (
-              <tr key={item.id} className="hover:bg-slate-800/20 transition-colors">
+              <TableRow key={item.id}>
                 {columns.map((col, i) => (
-                  <td key={i} className={`px-6 py-4 text-slate-300 ${col.align === 'right' ? 'text-right' : col.align === 'center' ? 'text-center' : 'text-left'}`}>
+                  <TableCell key={i} align={col.align || 'left'} className="text-admin-text-secondary">
                     {col.cell ? col.cell(item) : String(item[col.accessorKey as keyof T] || '')}
-                  </td>
+                  </TableCell>
                 ))}
-              </tr>
+              </TableRow>
             ))}
-            {data.length === 0 && (
-              <tr>
-                <td colSpan={columns.length} className="px-6 py-8 text-center text-slate-500">
-                  Nenhum registro encontrado.
-                </td>
-              </tr>
-            )}
           </tbody>
-        </table>
-      </div>
-    </div>
+        </Table>
+      )}
+    </Card>
   );
 }

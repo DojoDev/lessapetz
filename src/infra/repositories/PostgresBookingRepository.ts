@@ -54,6 +54,27 @@ export class PostgresBookingRepository implements BookingRepository {
     return res.rows.map(this.mapRow);
   }
 
+  async findUpcomingWithDetails(tenantId: string, limit: number = 50): Promise<any[]> {
+    const res = await pool.query(
+      `SELECT b.*, c.full_name as client_name, p.name as pet_name, s.name as service_name
+       FROM bookings b
+       JOIN customers c ON b.customer_id = c.id
+       JOIN pets p ON b.pet_id = p.id
+       JOIN services s ON b.service_id = s.id
+       WHERE b.tenant_id = $1
+       AND b.start_at >= NOW()
+       AND b.status = 'confirmed'
+       ORDER BY b.start_at ASC LIMIT $2`,
+      [tenantId, limit]
+    );
+    return res.rows.map(row => ({
+      ...this.mapRow(row),
+      clientName: row.client_name,
+      petName: row.pet_name,
+      serviceName: row.service_name,
+    }));
+  }
+
   async create(tenantId: string, data: Omit<Booking, 'id' | 'tenantId' | 'createdAt'>): Promise<Booking> {
     const res = await pool.query(
       `INSERT INTO bookings (tenant_id, customer_id, pet_id, service_id, customer_plan_id, employee_id, start_at, end_at, duration_min, total_price, status, notes, payment_method, payment_status)

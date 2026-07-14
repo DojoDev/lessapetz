@@ -33,12 +33,12 @@ export default async function PlanosPage() {
       <main className="flex-1 max-w-7xl w-full mx-auto p-6 md:p-8">
         <div className="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
-            <h2 className="text-2xl font-bold text-white">Planos</h2>
-            <p className="text-slate-400 mt-1">Gerencie os planos mensais oferecidos.</p>
+            <h2 className="text-2xl font-bold text-admin-text-primary">Planos</h2>
+            <p className="text-admin-text-muted mt-1">Gerencie os planos mensais oferecidos.</p>
           </div>
           <Link
             href="/admin/plans/new"
-            className="px-4 py-2 bg-teal-500 hover:bg-teal-400 text-white font-medium rounded-lg shadow-sm transition-colors text-sm"
+            className="px-4 py-2 bg-admin-accent hover:bg-admin-accent-hover text-white font-medium rounded-lg shadow-sm transition-colors text-sm"
           >
             Novo Plano
           </Link>

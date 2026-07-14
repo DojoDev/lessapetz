@@ -33,7 +33,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR" className={`${plusJakartaSans.variable} ${outfit.variable} scroll-smooth`}>
+    <html lang="pt-BR" className={`${plusJakartaSans.variable} ${outfit.variable} scroll-smooth`} data-scroll-behavior="smooth">
       <body className="font-sans bg-brand-cream text-stone-900 antialiased min-h-screen relative">
         {children}
         <FloatingWhatsApp />

@@ -1,9 +1,11 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { useI18n } from '../../../../i18n/I18nProvider';
 
 export default function LogoutButton({ className }: { className?: string }) {
   const router = useRouter();
+  const { dict } = useI18n();
 
   const handleLogout = async () => {
     try {
@@ -19,7 +21,7 @@ export default function LogoutButton({ className }: { className?: string }) {
 
   return (
     <button onClick={handleLogout} className={className}>
-      Logout
+      {dict.sidebar.logout}
     </button>
   );
 }

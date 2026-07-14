@@ -2,7 +2,10 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-
+import { Card } from '../components/ui/Card';
+import { Table, TableHeader, TableRow, TableHead, TableCell } from '../components/ui/Table';
+import { EmptyState } from '../components/ui/EmptyState';
+import { Badge } from '../components/ui/Badge';
 interface ServiceRow {
   id: string;
   name: string;
@@ -85,39 +88,39 @@ export default function ServiceTable({ services: initial }: ServiceTableProps) {
   };
 
   return (
-    <div className="bg-slate-900 rounded-xl shadow-sm border border-slate-800 overflow-hidden">
+    <Card noPadding>
       
       {/* --- DESKTOP TABLE VIEW --- */}
       <div className="hidden md:block overflow-x-auto">
-        <table className="w-full text-left border-collapse">
-          <thead>
-            <tr className="bg-slate-900/50 border-b border-slate-800">
-              <th className="px-4 py-3 text-xs font-semibold text-slate-400 uppercase tracking-wider w-12">Ordem</th>
-              <th className="px-4 py-3 text-xs font-semibold text-slate-400 uppercase tracking-wider">Serviço</th>
-              <th className="px-4 py-3 text-xs font-semibold text-slate-400 uppercase tracking-wider">Categoria</th>
-              <th className="px-4 py-3 text-xs font-semibold text-slate-400 uppercase tracking-wider">Duração</th>
-              <th className="px-4 py-3 text-xs font-semibold text-slate-400 uppercase tracking-wider">Preço</th>
-              <th className="px-4 py-3 text-xs font-semibold text-slate-400 uppercase tracking-wider">Porte</th>
-              <th className="px-4 py-3 text-xs font-semibold text-slate-400 uppercase tracking-wider text-center">Status</th>
-              <th className="px-4 py-3 text-xs font-semibold text-slate-400 uppercase tracking-wider text-right">Ações</th>
+        <Table>
+          <TableHeader>
+            <tr>
+              <TableHead className="w-12">Ordem</TableHead>
+              <TableHead>Serviço</TableHead>
+              <TableHead>Categoria</TableHead>
+              <TableHead>Duração</TableHead>
+              <TableHead>Preço</TableHead>
+              <TableHead>Porte</TableHead>
+              <TableHead align="center">Status</TableHead>
+              <TableHead align="right">Ações</TableHead>
             </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-800/50">
+          </TableHeader>
+          <tbody className="divide-y divide-admin-border/50">
             {services.length === 0 ? (
               <tr>
-                <td colSpan={8} className="px-6 py-12 text-center text-slate-400">
-                  Nenhum serviço cadastrado. Clique em &quot;Novo Serviço&quot; para começar.
+                <td colSpan={8} className="p-6">
+                  <EmptyState title="Nenhum serviço cadastrado" description="Clique em Novo Serviço para começar." />
                 </td>
               </tr>
             ) : (
               services.map((s, idx) => (
-                <tr key={s.id} className={`hover:bg-slate-800/20 transition-colors ${loadingId === s.id ? 'opacity-50' : ''}`}>
-                  <td className="px-4 py-3">
+                <TableRow key={s.id}>
+                  <TableCell>
                     <div className="flex flex-col gap-0.5">
                       <button
                         onClick={() => moveService(idx, 'up')}
                         disabled={idx === 0}
-                        className="p-1 text-slate-400 hover:text-slate-700 disabled:opacity-30 disabled:cursor-not-allowed min-h-[32px] min-w-[32px] flex items-center justify-center"
+                        className="p-1 text-admin-text-muted hover:text-admin-text-primary disabled:opacity-30 disabled:cursor-not-allowed min-h-[32px] min-w-[32px] flex items-center justify-center"
                         title="Mover para cima"
                       >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 15l7-7 7 7"/></svg>
@@ -125,56 +128,56 @@ export default function ServiceTable({ services: initial }: ServiceTableProps) {
                       <button
                         onClick={() => moveService(idx, 'down')}
                         disabled={idx === services.length - 1}
-                        className="p-1 text-slate-400 hover:text-slate-700 disabled:opacity-30 disabled:cursor-not-allowed min-h-[32px] min-w-[32px] flex items-center justify-center"
+                        className="p-1 text-admin-text-muted hover:text-admin-text-primary disabled:opacity-30 disabled:cursor-not-allowed min-h-[32px] min-w-[32px] flex items-center justify-center"
                         title="Mover para baixo"
                       >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7"/></svg>
                       </button>
                     </div>
-                  </td>
-                  <td className="px-4 py-3">
+                  </TableCell>
+                  <TableCell>
                     <div className="flex items-center gap-3">
                       {s.imageUrl ? (
-                        <img src={s.imageUrl} alt="" className="w-10 h-10 rounded-lg object-cover border border-slate-800" />
+                        <img src={s.imageUrl} alt="" className="w-10 h-10 rounded-lg object-cover border border-admin-border" />
                       ) : (
-                        <div className="w-10 h-10 rounded-lg bg-slate-800/50 flex items-center justify-center">
-                          <svg className="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
+                        <div className="w-10 h-10 rounded-lg bg-admin-border/50 flex items-center justify-center">
+                          <svg className="w-5 h-5 text-admin-text-muted" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5a1.5 1.5 0 001.5-1.5V5.25a1.5 1.5 0 00-1.5-1.5H3.75a1.5 1.5 0 00-1.5 1.5V19.5a1.5 1.5 0 001.5 1.5z" />
                           </svg>
                         </div>
                       )}
-                      <span className="font-medium text-white text-sm">{s.name}</span>
+                      <span className="font-medium text-admin-text-primary text-sm">{s.name}</span>
                     </div>
-                  </td>
-                  <td className="px-4 py-3">
-                    <span className="inline-flex px-2 py-0.5 rounded-full text-xs font-medium bg-slate-800/50 text-slate-300">
+                  </TableCell>
+                  <TableCell>
+                    <span className="inline-flex px-2 py-0.5 rounded-full text-xs font-medium bg-admin-border/50 text-admin-text-secondary">
                       {s.categoryName || '—'}
                     </span>
-                  </td>
-                  <td className="px-4 py-3 text-sm text-slate-300">{s.baseDurationMin > 0 ? `${s.baseDurationMin} min` : 'Mensal'}</td>
-                  <td className="px-4 py-3 text-sm font-medium text-slate-200">{formatPrice(s.basePrice, s.isStartingPrice)}</td>
-                  <td className="px-4 py-3 text-sm text-slate-300">{SIZE_LABELS[s.petSizeApplicability] || s.petSizeApplicability}</td>
-                  <td className="px-4 py-3 text-center">
+                  </TableCell>
+                  <TableCell className="text-sm text-admin-text-secondary">{s.baseDurationMin > 0 ? `${s.baseDurationMin} min` : 'Mensal'}</TableCell>
+                  <TableCell className="text-sm font-medium text-admin-text-secondary">{formatPrice(s.basePrice, s.isStartingPrice)}</TableCell>
+                  <TableCell className="text-sm text-admin-text-secondary">{SIZE_LABELS[s.petSizeApplicability] || s.petSizeApplicability}</TableCell>
+                  <TableCell align="center">
                     <button
                       onClick={() => toggleActive(s.id, s.isActive)}
                       disabled={loadingId === s.id}
                       className={`relative inline-flex h-8 w-14 items-center rounded-full transition-colors ${
-                        s.isActive ? 'bg-emerald-500' : 'bg-slate-300'
+                        s.isActive ? 'bg-admin-success' : 'bg-admin-text-muted'
                       }`}
                       title={s.isActive ? 'Desativar' : 'Ativar'}
                     >
                       <span
-                        className={`inline-block h-6 w-6 transform rounded-full bg-slate-900 shadow-sm transition-transform ${
+                        className={`inline-block h-6 w-6 transform rounded-full bg-admin-bg shadow-sm transition-transform ${
                           s.isActive ? 'translate-x-7' : 'translate-x-1'
                         }`}
                       />
                     </button>
-                  </td>
-                  <td className="px-4 py-3 text-right">
+                  </TableCell>
+                  <TableCell align="right">
                     <div className="flex items-center justify-end gap-2">
                       <button
                         onClick={() => router.push(`/admin/services/${s.id}`)}
-                        className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
+                        className="p-2 text-admin-text-muted hover:text-admin-accent hover:bg-admin-accent-muted rounded-lg transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
                         title="Editar"
                       >
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
@@ -184,7 +187,7 @@ export default function ServiceTable({ services: initial }: ServiceTableProps) {
                       <button
                         onClick={() => deleteService(s.id, s.name)}
                         disabled={loadingId === s.id}
-                        className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
+                        className="p-2 text-admin-text-muted hover:text-admin-danger hover:bg-admin-danger-bg rounded-lg transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
                         title="Excluir"
                       >
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
@@ -192,19 +195,19 @@ export default function ServiceTable({ services: initial }: ServiceTableProps) {
                         </svg>
                       </button>
                     </div>
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               ))
             )}
           </tbody>
-        </table>
+        </Table>
       </div>
 
       {/* --- MOBILE CARDS VIEW --- */}
-      <div className="md:hidden flex flex-col divide-y divide-slate-800/30">
+      <div className="md:hidden flex flex-col divide-y divide-admin-border/50">
         {services.length === 0 ? (
-          <div className="px-4 py-8 text-center text-sm text-slate-400">
-            Nenhum serviço cadastrado.
+          <div className="p-4">
+            <EmptyState title="Nenhum serviço cadastrado" />
           </div>
         ) : (
           services.map((s, idx) => (
@@ -212,10 +215,10 @@ export default function ServiceTable({ services: initial }: ServiceTableProps) {
               <div className="flex items-start gap-4">
                 {/* Image */}
                 {s.imageUrl ? (
-                  <img src={s.imageUrl} alt="" className="w-16 h-16 rounded-xl object-cover border border-slate-800 shrink-0" />
+                  <img src={s.imageUrl} alt="" className="w-16 h-16 rounded-xl object-cover border border-admin-border shrink-0" />
                 ) : (
-                  <div className="w-16 h-16 rounded-xl bg-slate-800/50 flex items-center justify-center shrink-0">
-                    <svg className="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
+                  <div className="w-16 h-16 rounded-xl bg-admin-border/50 flex items-center justify-center shrink-0">
+                    <svg className="w-8 h-8 text-admin-text-muted" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5a1.5 1.5 0 001.5-1.5V5.25a1.5 1.5 0 00-1.5-1.5H3.75a1.5 1.5 0 00-1.5 1.5V19.5a1.5 1.5 0 001.5 1.5z" />
                     </svg>
                   </div>
@@ -223,16 +226,16 @@ export default function ServiceTable({ services: initial }: ServiceTableProps) {
                 
                 {/* Main Info */}
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-semibold text-white text-base leading-tight mb-1 truncate">{s.name}</h3>
+                  <h3 className="font-semibold text-admin-text-primary text-base leading-tight mb-1 truncate">{s.name}</h3>
                   <div className="flex flex-wrap gap-1.5 mb-2">
-                    <span className="inline-flex px-2 py-0.5 rounded-md text-[10px] font-medium bg-slate-800/50 text-slate-300">
+                    <span className="inline-flex px-2 py-0.5 rounded-md text-[10px] font-medium bg-admin-border/50 text-admin-text-secondary">
                       {s.categoryName || '—'}
                     </span>
-                    <span className="inline-flex px-2 py-0.5 rounded-md text-[10px] font-medium bg-emerald-50 text-emerald-700">
+                    <span className="inline-flex px-2 py-0.5 rounded-md text-[10px] font-medium bg-admin-accent-muted text-admin-accent">
                       {SIZE_LABELS[s.petSizeApplicability] || s.petSizeApplicability}
                     </span>
                   </div>
-                  <div className="text-sm font-bold text-slate-200">
+                  <div className="text-sm font-bold text-admin-text-secondary">
                     {formatPrice(s.basePrice, s.isStartingPrice)}
                   </div>
                 </div>
@@ -242,11 +245,11 @@ export default function ServiceTable({ services: initial }: ServiceTableProps) {
                   onClick={() => toggleActive(s.id, s.isActive)}
                   disabled={loadingId === s.id}
                   className={`relative inline-flex h-8 w-14 items-center rounded-full transition-colors shrink-0 ${
-                    s.isActive ? 'bg-emerald-500' : 'bg-slate-300'
+                    s.isActive ? 'bg-admin-success' : 'bg-admin-text-muted'
                   }`}
                 >
                   <span
-                    className={`inline-block h-6 w-6 transform rounded-full bg-slate-900 shadow-sm transition-transform ${
+                    className={`inline-block h-6 w-6 transform rounded-full bg-admin-bg shadow-sm transition-transform ${
                       s.isActive ? 'translate-x-7' : 'translate-x-1'
                     }`}
                   />
@@ -254,19 +257,19 @@ export default function ServiceTable({ services: initial }: ServiceTableProps) {
               </div>
 
               {/* Action Bar (Reorder + Edit/Delete) */}
-              <div className="flex items-center justify-between pt-3 border-t border-slate-800/50">
-                <div className="flex items-center gap-1 bg-slate-900/50 rounded-lg p-1">
+              <div className="flex items-center justify-between pt-3 border-t border-admin-border/50">
+                <div className="flex items-center gap-1 bg-admin-bg/50 rounded-lg p-1">
                   <button
                     onClick={() => moveService(idx, 'up')}
                     disabled={idx === 0}
-                    className="p-2 text-slate-400 hover:text-slate-900 disabled:opacity-30 disabled:cursor-not-allowed bg-slate-900 rounded shadow-sm min-h-[36px] min-w-[36px] flex items-center justify-center"
+                    className="p-2 text-admin-text-muted hover:text-admin-text-primary disabled:opacity-30 disabled:cursor-not-allowed bg-admin-bg rounded shadow-sm min-h-[36px] min-w-[36px] flex items-center justify-center border border-admin-border"
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 15l7-7 7 7"/></svg>
                   </button>
                   <button
                     onClick={() => moveService(idx, 'down')}
                     disabled={idx === services.length - 1}
-                    className="p-2 text-slate-400 hover:text-slate-900 disabled:opacity-30 disabled:cursor-not-allowed bg-slate-900 rounded shadow-sm min-h-[36px] min-w-[36px] flex items-center justify-center"
+                    className="p-2 text-admin-text-muted hover:text-admin-text-primary disabled:opacity-30 disabled:cursor-not-allowed bg-admin-bg rounded shadow-sm min-h-[36px] min-w-[36px] flex items-center justify-center border border-admin-border"
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7"/></svg>
                   </button>
@@ -276,7 +279,7 @@ export default function ServiceTable({ services: initial }: ServiceTableProps) {
                   <button
                     onClick={() => deleteService(s.id, s.name)}
                     disabled={loadingId === s.id}
-                    className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors min-h-[44px]"
+                    className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-admin-danger bg-admin-danger-bg hover:opacity-80 rounded-lg transition-colors min-h-[44px]"
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
@@ -285,7 +288,7 @@ export default function ServiceTable({ services: initial }: ServiceTableProps) {
                   </button>
                   <button
                     onClick={() => router.push(`/admin/services/${s.id}`)}
-                    className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-teal-400 bg-teal-500/10 hover:bg-teal-500/20 rounded-lg transition-colors min-h-[44px]"
+                    className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-admin-accent bg-admin-accent-muted hover:opacity-80 rounded-lg transition-colors min-h-[44px]"
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125" />
@@ -299,6 +302,6 @@ export default function ServiceTable({ services: initial }: ServiceTableProps) {
         )}
       </div>
 
-    </div>
+    </Card>
   );
 }

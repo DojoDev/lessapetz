@@ -1,6 +1,7 @@
 @import "tailwindcss";
 
 @theme {
+  /* Customer Theme (Light) */
   --color-brand-burgundy: #6b0d23;
   --color-brand-burgundy-light: #8b1c37;
   --color-brand-burgundy-dark: #4b0615;
@@ -9,7 +10,32 @@
   --color-brand-gold-dark: #ad8d62;
   --color-brand-cream: #fcfbf9;
   --color-brand-cream-dark: #f3f0e8;
+
+  /* Admin Theme (Dark) - Single source of truth */
+  --color-admin-bg: #020617; /* slate-950 */
+  --color-admin-bg-hover: #0f172a; /* slate-900 */
+  --color-admin-card: #0f172a; /* slate-900 */
+  --color-admin-card-hover: #1e293b; /* slate-800 */
+  --color-admin-border: #1e293b; /* slate-800 */
+  --color-admin-border-hover: #334155; /* slate-700 */
   
+  --color-admin-text-primary: #f8fafc; /* slate-50 */
+  --color-admin-text-secondary: #cbd5e1; /* slate-300 */
+  --color-admin-text-muted: #94a3b8; /* slate-400 */
+  
+  --color-admin-accent: #14b8a6; /* teal-500 */
+  --color-admin-accent-hover: #2dd4bf; /* teal-400 */
+  --color-admin-accent-muted: rgba(20, 184, 166, 0.1);
+  
+  --color-admin-success: #10b981; /* emerald-500 */
+  --color-admin-success-bg: rgba(16, 185, 129, 0.1);
+  
+  --color-admin-warning: #f59e0b; /* amber-500 */
+  --color-admin-warning-bg: rgba(245, 158, 11, 0.1);
+  
+  --color-admin-danger: #ef4444; /* red-500 */
+  --color-admin-danger-bg: rgba(239, 68, 68, 0.1);
+
   --font-sans: var(--font-plus-jakarta), sans-serif;
   --font-serif: var(--font-outfit), sans-serif;
   
@@ -36,21 +62,46 @@
 :root {
   --background: #fcfbf9;
   --foreground: #1c1917;
+  --scrollbar-bg: #fcfbf9;
+  --scrollbar-thumb: #c5a880;
+  --scrollbar-thumb-hover: #6b0d23;
 }
 
-/* Custom premium scrollbar */
+/* Base custom premium scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
+  height: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #fcfbf9;
+  background: var(--scrollbar-bg);
 }
 ::-webkit-scrollbar-thumb {
-  background: #c5a880;
+  background: var(--scrollbar-thumb);
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #6b0d23;
+  background: var(--scrollbar-thumb-hover);
+}
+
+/* Admin Theme Overrides for Scrollbar and Global Layout */
+.admin-theme {
+  --scrollbar-bg: var(--color-admin-bg);
+  --scrollbar-thumb: var(--color-admin-border);
+  --scrollbar-thumb-hover: var(--color-admin-border-hover);
+  background-color: var(--color-admin-bg);
+  color: var(--color-admin-text-primary);
+  color-scheme: dark;
+}
+
+/* Override scrollbar for elements inside admin-theme */
+.admin-theme *::-webkit-scrollbar-track {
+  background: var(--color-admin-bg);
+}
+.admin-theme *::-webkit-scrollbar-thumb {
+  background: var(--color-admin-border);
+}
+.admin-theme *::-webkit-scrollbar-thumb:hover {
+  background: var(--color-admin-border-hover);
 }
 
 body {

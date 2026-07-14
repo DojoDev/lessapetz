@@ -10,6 +10,8 @@ import {
   Tooltip, 
   ResponsiveContainer 
 } from 'recharts';
+import { Card, CardHeader } from '../ui/Card';
+import { useI18n } from '../../../../i18n/I18nProvider';
 
 export interface RevenuePoint {
   date: string;
@@ -21,6 +23,7 @@ interface RevenueChartProps {
 }
 
 export default function RevenueChart({ data }: RevenueChartProps) {
+  const { dict } = useI18n();
   const [view, setView] = useState<'Weekly' | 'Monthly'>('Monthly');
 
   // Format currency for Y-axis and Tooltip
@@ -35,9 +38,9 @@ export default function RevenueChart({ data }: RevenueChartProps) {
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       return (
-        <div className="bg-slate-800 border border-slate-700 p-3 rounded-lg shadow-xl">
-          <p className="text-slate-400 text-xs mb-1">{label}</p>
-          <p className="text-teal-400 font-bold tabular-nums text-lg">
+        <div className="bg-admin-card border border-admin-border p-3 rounded-lg shadow-xl">
+          <p className="text-admin-text-muted text-xs mb-1">{label}</p>
+          <p className="text-admin-accent font-bold tabular-nums text-lg">
             {formatCurrency(payload[0].value)}
           </p>
         </div>
@@ -47,57 +50,57 @@ export default function RevenueChart({ data }: RevenueChartProps) {
   };
 
   return (
-    <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-sm flex flex-col h-full">
-      <div className="flex justify-between items-center mb-6">
+    <Card noPadding className="flex flex-col h-full">
+      <CardHeader className="mb-2 border-b-0 bg-transparent">
         <div>
-          <h3 className="text-lg font-bold text-white">Desempenho da Receita</h3>
-          <p className="text-slate-400 text-sm">Faturamento ao longo do tempo</p>
+          <h3 className="text-lg font-bold text-admin-text-primary">Desempenho da Receita</h3>
+          <p className="text-admin-text-muted text-sm">Faturamento ao longo do tempo</p>
         </div>
-        <div className="bg-slate-950 p-1 rounded-lg border border-slate-800 flex text-sm">
+        <div className="bg-admin-bg p-1 rounded-lg border border-admin-border flex text-sm">
           <button 
             onClick={() => setView('Weekly')}
-            className={`px-3 py-1.5 rounded-md transition-colors ${view === 'Weekly' ? 'bg-slate-800 text-white shadow-sm' : 'text-slate-400 hover:text-slate-200'}`}
+            className={`px-3 py-1.5 rounded-md transition-colors ${view === 'Weekly' ? 'bg-admin-card-hover text-admin-text-primary shadow-sm' : 'text-admin-text-muted hover:text-admin-text-secondary'}`}
           >
             Semanal
           </button>
           <button 
             onClick={() => setView('Monthly')}
-            className={`px-3 py-1.5 rounded-md transition-colors ${view === 'Monthly' ? 'bg-slate-800 text-white shadow-sm' : 'text-slate-400 hover:text-slate-200'}`}
+            className={`px-3 py-1.5 rounded-md transition-colors ${view === 'Monthly' ? 'bg-admin-card-hover text-admin-text-primary shadow-sm' : 'text-admin-text-muted hover:text-admin-text-secondary'}`}
           >
             Mensal
           </button>
         </div>
-      </div>
+      </CardHeader>
 
-      <div className="flex-1 min-h-[300px] w-full">
+      <div className="flex-1 min-h-[300px] w-full p-6 pt-0">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={data} margin={{ top: 10, right: 0, left: 0, bottom: 0 }}>
             <defs>
               <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#2DD4BF" stopOpacity={0.3}/>
-                <stop offset="95%" stopColor="#2DD4BF" stopOpacity={0}/>
+                <stop offset="5%" stopColor="var(--color-admin-accent)" stopOpacity={0.3}/>
+                <stop offset="95%" stopColor="var(--color-admin-accent)" stopOpacity={0}/>
               </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#1e293b" />
+            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--color-admin-border)" />
             <XAxis 
               dataKey="date" 
               axisLine={false} 
               tickLine={false} 
-              tick={{ fill: '#64748b', fontSize: 12 }}
+              tick={{ fill: 'var(--color-admin-text-muted)', fontSize: 12 }}
               dy={10}
             />
             <YAxis 
               axisLine={false} 
               tickLine={false} 
-              tick={{ fill: '#64748b', fontSize: 12 }}
+              tick={{ fill: 'var(--color-admin-text-muted)', fontSize: 12 }}
               tickFormatter={(val) => `R$${val/1000}k`}
               dx={-10}
             />
-            <Tooltip content={<CustomTooltip />} cursor={{ stroke: '#334155', strokeWidth: 1, strokeDasharray: '4 4' }} />
+            <Tooltip content={<CustomTooltip />} cursor={{ stroke: 'var(--color-admin-border-hover)', strokeWidth: 1, strokeDasharray: '4 4' }} />
             <Area 
               type="monotone" 
               dataKey="revenue" 
-              stroke="#2DD4BF" 
+              stroke="var(--color-admin-accent)" 
               strokeWidth={3}
               fillOpacity={1} 
               fill="url(#colorRevenue)" 
@@ -106,6 +109,6 @@ export default function RevenueChart({ data }: RevenueChartProps) {
           </AreaChart>
         </ResponsiveContainer>
       </div>
-    </div>
+    </Card>
   );
 }
