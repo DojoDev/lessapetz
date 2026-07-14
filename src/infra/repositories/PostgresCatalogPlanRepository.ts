@@ -42,9 +42,9 @@ export class PostgresCatalogPlanRepository implements CatalogPlanRepository {
 
   async create(tenantId: string, data: Omit<CatalogPlan, 'id' | 'tenantId' | 'createdAt' | 'includedServiceIds'>): Promise<CatalogPlan> {
     const res = await pool.query(
-      `INSERT INTO catalog_plans (tenant_id, name, description, monthly_price, image_url, is_active, display_order)
-       VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
-      [tenantId, data.name, data.description, data.monthlyPrice, data.imageUrl, data.isActive, data.displayOrder]
+      `INSERT INTO catalog_plans (tenant_id, name, description, monthly_price, image_url, is_active, display_order, quota, cycle_length_days)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *`,
+      [tenantId, data.name, data.description, data.monthlyPrice, data.imageUrl, data.isActive, data.displayOrder, data.quota || 0, data.cycleLengthDays || 30]
     );
     const plan = this.mapPlan(res.rows[0]);
     plan.includedServiceIds = [];
@@ -62,6 +62,8 @@ export class PostgresCatalogPlanRepository implements CatalogPlanRepository {
     if (data.imageUrl !== undefined) { fields.push(`image_url = $${idx++}`); values.push(data.imageUrl); }
     if (data.isActive !== undefined) { fields.push(`is_active = $${idx++}`); values.push(data.isActive); }
     if (data.displayOrder !== undefined) { fields.push(`display_order = $${idx++}`); values.push(data.displayOrder); }
+    if (data.quota !== undefined) { fields.push(`quota = $${idx++}`); values.push(data.quota); }
+    if (data.cycleLengthDays !== undefined) { fields.push(`cycle_length_days = $${idx++}`); values.push(data.cycleLengthDays); }
 
     if (fields.length === 0) return this.findById(tenantId, id);
 
@@ -122,6 +124,8 @@ export class PostgresCatalogPlanRepository implements CatalogPlanRepository {
       imageUrl: row.image_url ?? null,
       isActive: row.is_active,
       displayOrder: row.display_order ?? 0,
+      quota: row.quota ?? 0,
+      cycleLengthDays: row.cycle_length_days ?? 30,
       includedServiceIds: [],
       createdAt: row.created_at,
     };

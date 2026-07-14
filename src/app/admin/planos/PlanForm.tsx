@@ -27,6 +27,8 @@ export default function PlanForm({ plan, isEditing = false }: PlanFormProps) {
     monthlyPrice: plan?.monthlyPrice?.toString() || '0',
     imageUrl: plan?.imageUrl || '',
     isActive: plan?.isActive ?? true,
+    quota: plan?.quota?.toString() || '0',
+    cycleLengthDays: plan?.cycleLengthDays?.toString() || '30',
     includedServiceIds: plan?.includedServiceIds || ([] as string[]),
   });
 
@@ -66,6 +68,8 @@ export default function PlanForm({ plan, isEditing = false }: PlanFormProps) {
         monthlyPrice: parseFloat(form.monthlyPrice) || 0,
         imageUrl: form.imageUrl || null,
         isActive: form.isActive,
+        quota: parseInt(form.quota, 10) || 0,
+        cycleLengthDays: parseInt(form.cycleLengthDays, 10) || 30,
         includedServiceIds: form.includedServiceIds,
       };
 
@@ -137,6 +141,38 @@ export default function PlanForm({ plan, isEditing = false }: PlanFormProps) {
           className="w-full px-4 py-3 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent min-h-[44px]"
           placeholder="200.00"
         />
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Quota */}
+        <div>
+          <label className="block text-sm font-medium text-slate-700 mb-1.5">Quota de Serviços por Ciclo *</label>
+          <input
+            type="number"
+            required
+            min="0"
+            value={form.quota}
+            onChange={e => setForm({ ...form, quota: e.target.value })}
+            className="w-full px-4 py-3 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent min-h-[44px]"
+            placeholder="Ex: 4"
+          />
+          <p className="mt-1 text-xs text-slate-500">Nº de vezes que o serviço pode ser usado no ciclo.</p>
+        </div>
+
+        {/* Cycle Length */}
+        <div>
+          <label className="block text-sm font-medium text-slate-700 mb-1.5">Duração do Ciclo (dias) *</label>
+          <input
+            type="number"
+            required
+            min="1"
+            value={form.cycleLengthDays}
+            onChange={e => setForm({ ...form, cycleLengthDays: e.target.value })}
+            className="w-full px-4 py-3 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent min-h-[44px]"
+            placeholder="Ex: 30"
+          />
+          <p className="mt-1 text-xs text-slate-500">Normalmente 30 dias para mensal.</p>
+        </div>
       </div>
 
       {/* Included Services Multi-select */}

@@ -7,6 +7,8 @@ export interface CatalogPlan {
   imageUrl: string | null;
   isActive: boolean;
   displayOrder: number;
+  quota: number;
+  cycleLengthDays: number;
   includedServiceIds: string[];
   createdAt: Date;
 }

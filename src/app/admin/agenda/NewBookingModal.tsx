@@ -34,7 +34,7 @@ export default function NewBookingModal({ onClose }: { onClose: () => void }) {
   const selectedCustomer = customers.find(c => c.id === selectedCustomerId);
   const selectedPet = selectedCustomer?.pets?.find((p: any) => p.id === selectedPetId);
   const selectedService = services.find(s => s.id === selectedServiceId);
-  const activePlans = selectedCustomer?.plans?.filter((p: any) => p.petId === selectedPetId && new Date(p.validUntil) >= new Date()) || [];
+  const activePlans = selectedCustomer?.plans?.filter((p: any) => p.petId === selectedPetId && p.status === 'active' && p.usesConsumed < p.totalQuota && new Date(p.cycleEndDate) >= new Date()) || [];
   const hasActivePlan = activePlans.length > 0;
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -57,6 +57,7 @@ export default function NewBookingModal({ onClose }: { onClose: () => void }) {
           totalPrice: selectedService.price,
           paymentMethod: paymentMethod || null,
           usePlan: hasActivePlan, // Send flag if we want to use the plan
+          customerPlanId: hasActivePlan ? activePlans[0].id : null,
         }),
       });
 
@@ -125,7 +126,7 @@ export default function NewBookingModal({ onClose }: { onClose: () => void }) {
                 <h4 className="text-sm font-medium text-slate-900 mb-2">Status do Pet</h4>
                 {hasActivePlan ? (
                   <div className="flex items-center gap-2 text-emerald-700 text-sm font-medium bg-emerald-50 px-3 py-2 rounded-md border border-emerald-100">
-                    <span>✅ Plano Mensal Ativo ({activePlans[0].planName})</span>
+                    <span>✅ Plano Ativo: {activePlans[0].planName} ({activePlans[0].totalQuota - activePlans[0].usesConsumed} usos restantes)</span>
                   </div>
                 ) : (
                   <div className="text-sm text-slate-600">

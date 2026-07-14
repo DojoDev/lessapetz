@@ -11,6 +11,7 @@ export interface Booking {
   customerId: string;
   petId: string;
   serviceId: string;
+  customerPlanId: string | null;
   employeeId: string | null;
   startAt: Date;
   endAt: Date;

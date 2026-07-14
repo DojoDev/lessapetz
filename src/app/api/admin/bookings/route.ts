@@ -25,12 +25,23 @@ export async function POST(req: NextRequest) {
     // Check if covered by plan
     let paymentStatus = body.paymentStatus || 'pending';
     let totalPrice = body.totalPrice || 0;
+    let customerPlanId = null;
 
     if (body.usePlan) {
       const activePlans = await planRepo.findActiveByPetId(tenantId, body.petId);
-      if (activePlans.length > 0) {
+      const targetPlan = body.customerPlanId 
+        ? activePlans.find(p => p.id === body.customerPlanId) 
+        : activePlans[0];
+
+      if (targetPlan && targetPlan.usesConsumed < targetPlan.totalQuota) {
         paymentStatus = 'covered_by_plan';
         totalPrice = 0;
+        customerPlanId = targetPlan.id;
+        
+        // Consume quota
+        await planRepo.consumeQuota(targetPlan.id);
+      } else {
+        return NextResponse.json({ error: 'Plano inválido, expirado ou quota excedida' }, { status: 400 });
       }
     }
 
@@ -38,6 +49,7 @@ export async function POST(req: NextRequest) {
       customerId: body.customerId,
       petId: body.petId,
       serviceId: body.serviceId,
+      customerPlanId: customerPlanId,
       employeeId: null, // Could be assigned later
       startAt: new Date(body.startAt),
       endAt: new Date(new Date(body.startAt).getTime() + (body.durationMin || 60) * 60000),

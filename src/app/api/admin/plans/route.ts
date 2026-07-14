@@ -39,6 +39,8 @@ export async function POST(request: NextRequest) {
       imageUrl: body.imageUrl || null,
       isActive: body.isActive ?? true,
       displayOrder: body.displayOrder ?? 0,
+      quota: Number(body.quota) || 0,
+      cycleLengthDays: Number(body.cycleLengthDays) || 30,
     });
 
     // Set included services if provided

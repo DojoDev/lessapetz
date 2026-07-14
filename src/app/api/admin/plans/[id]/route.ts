@@ -49,6 +49,8 @@ export async function PUT(
     if (body.imageUrl !== undefined) updateData.imageUrl = body.imageUrl || null;
     if (body.isActive !== undefined) updateData.isActive = body.isActive;
     if (body.displayOrder !== undefined) updateData.displayOrder = body.displayOrder;
+    if (body.quota !== undefined) updateData.quota = Number(body.quota) || 0;
+    if (body.cycleLengthDays !== undefined) updateData.cycleLengthDays = Number(body.cycleLengthDays) || 30;
 
     const plan = await planRepo.update(tenantId, id, updateData);
     if (!plan) return NextResponse.json({ error: 'Plano não encontrado' }, { status: 404 });

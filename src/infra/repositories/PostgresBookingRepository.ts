@@ -56,10 +56,10 @@ export class PostgresBookingRepository implements BookingRepository {
 
   async create(tenantId: string, data: Omit<Booking, 'id' | 'tenantId' | 'createdAt'>): Promise<Booking> {
     const res = await pool.query(
-      `INSERT INTO bookings (tenant_id, customer_id, pet_id, service_id, employee_id, start_at, end_at, duration_min, total_price, status, notes, payment_method, payment_status)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) RETURNING *`,
+      `INSERT INTO bookings (tenant_id, customer_id, pet_id, service_id, customer_plan_id, employee_id, start_at, end_at, duration_min, total_price, status, notes, payment_method, payment_status)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14) RETURNING *`,
       [
-        tenantId, data.customerId, data.petId, data.serviceId, data.employeeId,
+        tenantId, data.customerId, data.petId, data.serviceId, data.customerPlanId || null, data.employeeId,
         data.startAt, data.endAt, data.durationMin, data.totalPrice,
         data.status, data.notes, data.paymentMethod || null, data.paymentStatus || 'pending'
       ]
@@ -105,6 +105,7 @@ export class PostgresBookingRepository implements BookingRepository {
       customerId: row.customer_id,
       petId: row.pet_id,
       serviceId: row.service_id,
+      customerPlanId: row.customer_plan_id,
       employeeId: row.employee_id,
       startAt: row.start_at,
       endAt: row.end_at,

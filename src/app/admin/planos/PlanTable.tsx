@@ -10,6 +10,8 @@ interface PlanRow {
   monthlyPrice: number;
   imageUrl: string | null;
   isActive: boolean;
+  quota: number;
+  cycleLengthDays: number;
   includedServiceIds: string[];
 }
 
@@ -66,6 +68,7 @@ export default function PlanTable({ plans: initial }: PlanTableProps) {
               <th className="px-6 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Plano</th>
               <th className="px-6 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Preço Mensal</th>
               <th className="px-6 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Serviços Inclusos</th>
+              <th className="px-6 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Regras</th>
               <th className="px-6 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider text-center">Status</th>
               <th className="px-6 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider text-right">Ações</th>
             </tr>
@@ -104,6 +107,10 @@ export default function PlanTable({ plans: initial }: PlanTableProps) {
                     <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-50 text-indigo-700">
                       {p.includedServiceIds.length} serviço{p.includedServiceIds.length !== 1 ? 's' : ''}
                     </span>
+                  </td>
+                  <td className="px-6 py-4 text-sm text-slate-600">
+                    <div>{p.quota} usos</div>
+                    <div className="text-xs text-slate-400">cada {p.cycleLengthDays} dias</div>
                   </td>
                   <td className="px-6 py-4 text-center">
                     <button
@@ -175,6 +182,9 @@ export default function PlanTable({ plans: initial }: PlanTableProps) {
                   <div className="flex flex-wrap gap-1.5 mb-2">
                     <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-medium bg-indigo-50 text-indigo-700">
                       {p.includedServiceIds.length} serviço{p.includedServiceIds.length !== 1 ? 's' : ''}
+                    </span>
+                    <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-medium bg-slate-100 text-slate-600">
+                      Quota: {p.quota} / {p.cycleLengthDays}d
                     </span>
                   </div>
                   <div className="text-sm font-bold text-slate-800">
