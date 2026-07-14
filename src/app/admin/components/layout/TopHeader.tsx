@@ -1,10 +1,10 @@
 'use client';
 
-import { Bell, Search } from 'lucide-react';
+import { Bell, Search, Menu } from 'lucide-react';
 import LanguageSelector from './LanguageSelector';
 import { useI18n } from '../../../../i18n/I18nProvider';
 
-export default function TopHeader({ email, role }: { email?: string, role?: string }) {
+export default function TopHeader({ email, role, onMenuClick }: { email?: string, role?: string, onMenuClick?: () => void }) {
   const { dict, locale } = useI18n();
 
   // Map our internal 'pt' | 'en' | 'es' to valid BCP 47 locale codes
@@ -26,8 +26,14 @@ export default function TopHeader({ email, role }: { email?: string, role?: stri
 
   return (
     <header className="h-16 border-b border-slate-800 bg-slate-950 flex items-center justify-between px-6 sticky top-0 z-40">
-      <div>
-        <p className="text-sm text-slate-400 capitalize">{today}</p>
+      <div className="flex items-center gap-3">
+        <button 
+          onClick={onMenuClick}
+          className="lg:hidden p-2 -ml-2 text-slate-400 hover:text-white transition-colors rounded-lg hover:bg-slate-800"
+        >
+          <Menu size={24} />
+        </button>
+        <p className="text-sm text-slate-400 capitalize hidden sm:block">{today}</p>
       </div>
 
       <div className="flex items-center gap-4">

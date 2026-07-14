@@ -11,12 +11,13 @@ import {
   BellRing,
   LogOut,
   Sparkles,
-  Box
+  Box,
+  X
 } from 'lucide-react';
 import LogoutButton from './LogoutButton';
 import { useI18n } from '../../../../i18n/I18nProvider';
 
-export default function Sidebar() {
+export default function Sidebar({ isMobileOpen, onClose }: { isMobileOpen?: boolean, onClose?: () => void }) {
   const pathname = usePathname();
   const { dict } = useI18n();
 
@@ -31,7 +32,19 @@ export default function Sidebar() {
   ];
 
   return (
-    <aside className="w-64 bg-slate-950 border-r border-slate-800 h-screen fixed left-0 top-0 hidden lg:flex flex-col z-50">
+    <>
+      {/* Mobile Overlay */}
+      {isMobileOpen && (
+        <div 
+          className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-40 lg:hidden" 
+          onClick={onClose}
+        />
+      )}
+
+      {/* Sidebar Content */}
+      <aside className={`w-64 bg-slate-950 border-r border-slate-800 h-screen fixed left-0 top-0 flex flex-col z-50 transition-transform duration-300 ease-in-out ${
+        isMobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+      }`}>
       
       {/* Brand */}
       <div className="h-16 flex items-center px-6 border-b border-slate-800 shrink-0">
@@ -41,6 +54,13 @@ export default function Sidebar() {
             VetFlow
           </span>
         </div>
+        
+        {/* Mobile close button */}
+        {isMobileOpen && (
+          <button onClick={onClose} className="lg:hidden ml-auto p-2 -mr-2 text-slate-400 hover:text-white rounded-lg">
+            <X size={20} />
+          </button>
+        )}
       </div>
 
       {/* Navigation */}
@@ -75,5 +95,6 @@ export default function Sidebar() {
         </div>
       </div>
     </aside>
+    </>
   );
 }

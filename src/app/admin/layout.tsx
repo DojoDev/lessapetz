@@ -5,8 +5,7 @@ import { verifyJwt } from '../../infra/auth/jwt';
 import { PostgresAdminRepository } from '../../infra/repositories/PostgresAdminRepository';
 import { getDictionary, Locale } from '../../i18n';
 import { I18nProvider } from '../../i18n/I18nProvider';
-import Sidebar from './components/layout/Sidebar';
-import TopHeader from './components/layout/TopHeader';
+import AdminLayoutWrapper from './components/layout/AdminLayoutWrapper';
 
 export const metadata: Metadata = {
   title: 'Admin - VetFlow',
@@ -44,11 +43,9 @@ export default async function AdminLayout({
   return (
     <I18nProvider dict={dict} locale={locale}>
       <div className="admin-theme min-h-screen bg-admin-bg text-admin-text-primary selection:bg-admin-accent-muted selection:text-admin-accent">
-        <Sidebar />
-        <div className="lg:pl-64 flex flex-col min-h-screen transition-all duration-300">
-          <TopHeader email={email} role={role} />
+        <AdminLayoutWrapper email={email} role={role}>
           {children}
-        </div>
+        </AdminLayoutWrapper>
       </div>
     </I18nProvider>
   );
