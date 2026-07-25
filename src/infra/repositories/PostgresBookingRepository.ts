@@ -1,4 +1,5 @@
-import { Booking } from '../../domain/entities/Booking';
+import { Booking, BookingStatus } from '../../domain/entities/Booking';
+import { BookingStatusHistory } from '../../domain/entities/BookingStatusHistory';
 import { BookingRepository } from '../../domain/repositories/BookingRepository';
 import pool from '../database/pool';
 
@@ -47,7 +48,7 @@ export class PostgresBookingRepository implements BookingRepository {
     const res = await pool.query(
       `SELECT * FROM bookings WHERE tenant_id = $1
        AND start_at >= NOW()
-       AND status = 'confirmed'
+       AND status = 'SCHEDULED'
        ORDER BY start_at ASC LIMIT $2`,
       [tenantId, limit]
     );
@@ -63,7 +64,7 @@ export class PostgresBookingRepository implements BookingRepository {
        JOIN services s ON b.service_id = s.id
        WHERE b.tenant_id = $1
        AND b.start_at >= NOW()
-       AND b.status = 'confirmed'
+       AND b.status = 'SCHEDULED'
        ORDER BY b.start_at ASC LIMIT $2`,
       [tenantId, limit]
     );
@@ -97,15 +98,81 @@ export class PostgresBookingRepository implements BookingRepository {
     return this.mapRow(res.rows[0]);
   }
 
+  async updateStatusWithHistory(
+    tenantId: string, 
+    id: string, 
+    newStatus: string, 
+    previousStatus: string | null, 
+    changedByUserId: string | null,
+    isAdminOverride: boolean = false,
+    notes: string | null = null
+  ): Promise<Booking | null> {
+    const client = await pool.connect();
+    try {
+      await client.query('BEGIN');
+      
+      const res = await client.query(
+        'UPDATE bookings SET status = $1 WHERE tenant_id = $2 AND id = $3 RETURNING *',
+        [newStatus, tenantId, id]
+      );
+      
+      if (res.rows.length === 0) {
+        await client.query('ROLLBACK');
+        return null;
+      }
+      
+      await client.query(
+        `INSERT INTO booking_status_history (booking_id, tenant_id, previous_status, new_status, changed_by_user_id, is_admin_override, notes)
+         VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+        [id, tenantId, previousStatus, newStatus, changedByUserId, isAdminOverride, notes]
+      );
+
+      await client.query('COMMIT');
+      return this.mapRow(res.rows[0]);
+    } catch (e) {
+      await client.query('ROLLBACK');
+      throw e;
+    } finally {
+      client.release();
+    }
+  }
+
+  async getStatusHistory(tenantId: string, id: string): Promise<BookingStatusHistory[]> {
+    const res = await pool.query(
+      'SELECT * FROM booking_status_history WHERE tenant_id = $1 AND booking_id = $2 ORDER BY created_at DESC',
+      [tenantId, id]
+    );
+    return res.rows.map(row => ({
+      id: row.id,
+      bookingId: row.booking_id,
+      tenantId: row.tenant_id,
+      previousStatus: row.previous_status,
+      newStatus: row.new_status,
+      changedByUserId: row.changed_by_user_id,
+      isAdminOverride: row.is_admin_override,
+      notes: row.notes,
+      createdAt: row.created_at
+    }));
+  }
+
   async cancel(tenantId: string, id: string): Promise<Booking | null> {
-    return this.updateStatus(tenantId, id, 'cancelled');
+    return this.updateStatus(tenantId, id, 'CANCELLED');
   }
 
   async countToday(tenantId: string): Promise<number> {
     const res = await pool.query(
       `SELECT COUNT(*)::int AS count FROM bookings
-       WHERE tenant_id = $1 AND start_at::date = CURRENT_DATE AND status != 'cancelled'`,
+       WHERE tenant_id = $1 AND start_at::date = CURRENT_DATE AND status NOT IN ('CANCELLED', 'NO_SHOW')`,
       [tenantId]
+    );
+    return res.rows[0].count;
+  }
+
+  async countByStatusToday(tenantId: string, status: string): Promise<number> {
+    const res = await pool.query(
+      `SELECT COUNT(*)::int AS count FROM bookings
+       WHERE tenant_id = $1 AND start_at::date = CURRENT_DATE AND status = $2`,
+      [tenantId, status]
     );
     return res.rows[0].count;
   }
@@ -113,7 +180,7 @@ export class PostgresBookingRepository implements BookingRepository {
   async revenueToday(tenantId: string): Promise<number> {
     const res = await pool.query(
       `SELECT COALESCE(SUM(total_price), 0)::numeric AS revenue FROM bookings
-       WHERE tenant_id = $1 AND start_at::date = CURRENT_DATE AND status != 'cancelled'`,
+       WHERE tenant_id = $1 AND start_at::date = CURRENT_DATE AND status NOT IN ('CANCELLED', 'NO_SHOW')`,
       [tenantId]
     );
     return parseFloat(res.rows[0].revenue);
@@ -123,7 +190,7 @@ export class PostgresBookingRepository implements BookingRepository {
     const res = await pool.query(
       `SELECT COALESCE(SUM(total_price), 0)::numeric AS revenue FROM bookings
        WHERE tenant_id = $1 AND start_at >= $2 AND end_at <= $3 
-       AND payment_status = 'paid' AND status != 'cancelled'`,
+       AND payment_status = 'paid' AND status NOT IN ('CANCELLED', 'NO_SHOW')`,
       [tenantId, from, to]
     );
     return parseFloat(res.rows[0].revenue);
@@ -133,7 +200,7 @@ export class PostgresBookingRepository implements BookingRepository {
     const res = await pool.query(
       `SELECT COALESCE(SUM(total_price), 0)::numeric AS pending FROM bookings
        WHERE tenant_id = $1 AND start_at >= $2 AND end_at <= $3 
-       AND payment_status = 'pending' AND status != 'cancelled'`,
+       AND payment_status = 'pending' AND status NOT IN ('CANCELLED', 'NO_SHOW')`,
       [tenantId, from, to]
     );
     return parseFloat(res.rows[0].pending);
@@ -148,7 +215,7 @@ export class PostgresBookingRepository implements BookingRepository {
        FROM bookings
        WHERE tenant_id = $1 
          AND start_at >= date_trunc('month', current_date - interval '${limitMonths - 1} months')
-         AND payment_status = 'paid' AND status != 'cancelled'
+         AND payment_status = 'paid' AND status NOT IN ('CANCELLED', 'NO_SHOW')
        GROUP BY 1, 2
        ORDER BY month_date ASC`,
       [tenantId]
@@ -176,7 +243,7 @@ export class PostgresBookingRepository implements BookingRepository {
       clientName: row.client_name,
       service: row.service_name,
       time: row.time_str,
-      status: row.status === 'confirmed' ? 'Confirmed' : row.status === 'completed' ? 'Completed' : 'Pending',
+      status: row.status === 'SCHEDULED' ? 'Agendado' : row.status === 'COMPLETED' ? 'Finalizado' : row.status === 'CANCELLED' ? 'Cancelado' : 'Em andamento',
       startAt: row.start_at
     }));
   }
@@ -186,7 +253,7 @@ export class PostgresBookingRepository implements BookingRepository {
       `SELECT b.id, c.full_name as client_name, b.start_at, b.total_price, b.payment_status
        FROM bookings b
        JOIN customers c ON b.customer_id = c.id
-       WHERE b.tenant_id = $1 AND b.status != 'cancelled'
+       WHERE b.tenant_id = $1 AND b.status NOT IN ('CANCELLED', 'NO_SHOW')
        ORDER BY b.start_at DESC
        LIMIT $2`,
       [tenantId, limit]

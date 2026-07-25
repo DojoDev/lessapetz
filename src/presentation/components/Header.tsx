@@ -5,6 +5,9 @@ interface HeaderProps {
 }
 
 export default function Header({ hideBookingButton = false }: HeaderProps) {
+  const isBookingEnabled = process.env.NEXT_PUBLIC_ENABLE_BOOKING_BUTTON === 'true';
+  const shouldHideBookingButton = hideBookingButton || !isBookingEnabled;
+
   return (
     <header className="relative w-full">
       {/* Hero Banner Section */}
@@ -57,7 +60,7 @@ export default function Header({ hideBookingButton = false }: HeaderProps) {
             Especialistas em estética pet de alto padrão para quem exige o melhor, e formação profissionalizantes de profissionais líderes de mercado. 💎
           </p>
 
-          {!hideBookingButton && (
+          {!shouldHideBookingButton && (
             <div className="mt-8 flex flex-col sm:flex-row justify-center gap-4">
               <a
                 href="/booking"

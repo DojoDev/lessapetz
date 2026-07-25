@@ -1,10 +1,52 @@
 "use client";
 
-import { X, Calendar, Clock, User, UserCheck, Dog, CreditCard, Tag } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { X, Calendar, Clock, User, UserCheck, Dog, CreditCard, Tag, RefreshCcw } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { BookingStatusService } from '../../../domain/services/BookingStatusService';
+import { BookingStatus } from '../../../domain/entities/Booking';
 
 export default function BookingDetailsModal({ booking, onClose }: { booking: any, onClose: () => void }) {
   const router = useRouter();
+  const [history, setHistory] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [updating, setUpdating] = useState(false);
+
+  const fetchHistory = async () => {
+    try {
+      const res = await fetch(`/api/bookings/${booking.id}/history`);
+      if (res.ok) {
+        const data = await res.json();
+        setHistory(data.history);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchHistory();
+  }, [booking.id]);
+
+  const handleAction = async (nextStatus: string) => {
+    if (updating) return;
+    setUpdating(true);
+    try {
+      const res = await fetch(`/api/bookings/${booking.id}/status`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: nextStatus })
+      });
+      if (res.ok) {
+        window.location.reload();
+      }
+    } catch (err) {
+      console.error(err);
+      setUpdating(false);
+    }
+  };
   
   const bDate = new Date(booking.startAt);
   const endDate = new Date(booking.endAt);
@@ -12,13 +54,21 @@ export default function BookingDetailsModal({ booking, onClose }: { booking: any
   const dateStr = bDate.toLocaleDateString('pt-BR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
   const timeStr = `${bDate.getHours().toString().padStart(2, '0')}:${bDate.getMinutes().toString().padStart(2, '0')} - ${endDate.getHours().toString().padStart(2, '0')}:${endDate.getMinutes().toString().padStart(2, '0')}`;
 
-  const getStatusBadge = (status: string) => {
-    switch(status) {
-      case 'confirmed': return <span className="px-2 py-1 bg-blue-500/20 text-blue-400 text-xs font-semibold rounded-md uppercase tracking-wider">Confirmado</span>;
-      case 'completed': return <span className="px-2 py-1 bg-emerald-500/20 text-emerald-400 text-xs font-semibold rounded-md uppercase tracking-wider">Concluído</span>;
-      case 'cancelled': return <span className="px-2 py-1 bg-red-500/20 text-red-400 text-xs font-semibold rounded-md uppercase tracking-wider">Cancelado</span>;
-      default: return <span className="px-2 py-1 bg-slate-500/20 text-slate-400 text-xs font-semibold rounded-md uppercase tracking-wider">{status}</span>;
-    }
+  const statusConfig = BookingStatusService.getStatusConfig(booking.status as BookingStatus);
+  const primaryAction = BookingStatusService.getPrimaryAction(booking.status as BookingStatus);
+
+  const getStatusBadge = () => {
+    return (
+      <span 
+        className="px-2 py-1 text-xs font-semibold rounded-md uppercase tracking-wider"
+        style={{ 
+          backgroundColor: statusConfig.color === 'blue' ? 'rgba(59, 130, 246, 0.2)' : statusConfig.color === 'yellow' ? 'rgba(234, 179, 8, 0.2)' : statusConfig.color === 'purple' ? 'rgba(168, 85, 247, 0.2)' : statusConfig.color === 'green' ? 'rgba(34, 197, 94, 0.2)' : statusConfig.color === 'red' ? 'rgba(239, 68, 68, 0.2)' : statusConfig.color === 'orange' ? 'rgba(249, 115, 22, 0.2)' : 'rgba(100, 116, 139, 0.2)', 
+          color: statusConfig.color === 'blue' ? '#60a5fa' : statusConfig.color === 'yellow' ? '#facc15' : statusConfig.color === 'purple' ? '#c084fc' : statusConfig.color === 'green' ? '#4ade80' : statusConfig.color === 'red' ? '#f87171' : statusConfig.color === 'orange' ? '#fb923c' : '#94a3b8' 
+        }}
+      >
+        {statusConfig.label}
+      </span>
+    );
   };
 
   const getPaymentBadge = (method: string, status: string) => {
@@ -42,10 +92,22 @@ export default function BookingDetailsModal({ booking, onClose }: { booking: any
 
         <div className="p-6 overflow-y-auto space-y-6">
           
-          {/* Status Header */}
-          <div className="flex gap-3 pb-4 border-b border-admin-border">
-            {getStatusBadge(booking.status)}
-            {getPaymentBadge(booking.paymentMethod, booking.paymentStatus)}
+          {/* Status Header & Action */}
+          <div className="flex gap-3 pb-4 border-b border-admin-border justify-between items-center">
+            <div className="flex gap-3">
+              {getStatusBadge()}
+              {getPaymentBadge(booking.paymentMethod, booking.paymentStatus)}
+            </div>
+            {primaryAction && (
+              <button 
+                onClick={() => handleAction(primaryAction.nextStatus)}
+                disabled={updating}
+                className="px-3 py-1.5 bg-admin-accent hover:bg-admin-accent-hover text-white text-xs font-bold rounded-md shadow-sm transition-colors disabled:opacity-50 flex items-center gap-2"
+              >
+                {updating && <RefreshCcw className="w-3 h-3 animate-spin" />}
+                {primaryAction.label}
+              </button>
+            )}
           </div>
 
           {/* Time Info */}
@@ -95,6 +157,54 @@ export default function BookingDetailsModal({ booking, onClose }: { booking: any
               <p className="text-sm text-admin-text-secondary">{booking.notes}</p>
             </div>
           )}
+
+          {/* Status History Timeline */}
+          <div className="bg-admin-border/20 rounded-xl p-4 border border-admin-border/50">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-admin-text-muted mb-4">Histórico de Status</h4>
+            {loading ? (
+              <p className="text-sm text-admin-text-muted">Carregando...</p>
+            ) : history.length === 0 ? (
+              <p className="text-sm text-admin-text-muted">Nenhum histórico encontrado.</p>
+            ) : (
+              <div className="space-y-4">
+                {history.map((item, idx) => {
+                  const hConf = BookingStatusService.getStatusConfig(item.newStatus as BookingStatus);
+                  const hDate = new Date(item.createdAt);
+                  
+                  let elapsedStr = '';
+                  if (idx === 0) {
+                    const diffMins = Math.floor((Date.now() - hDate.getTime()) / 60000);
+                    if (diffMins < 60) elapsedStr = `há ${diffMins} min`;
+                    else elapsedStr = `há ${Math.floor(diffMins / 60)}h`;
+                  }
+
+                  return (
+                    <div key={item.id} className="flex gap-3">
+                      <div className="flex flex-col items-center">
+                        <div 
+                          className="w-2.5 h-2.5 rounded-full shrink-0" 
+                          style={{ backgroundColor: hConf.color === 'blue' ? '#3b82f6' : hConf.color === 'yellow' ? '#eab308' : hConf.color === 'purple' ? '#a855f7' : hConf.color === 'green' ? '#22c55e' : hConf.color === 'red' ? '#ef4444' : hConf.color === 'orange' ? '#f97316' : '#64748b' }} 
+                        />
+                        {idx !== history.length - 1 && <div className="w-0.5 h-full bg-admin-border my-1"></div>}
+                      </div>
+                      <div className="pb-1">
+                        <p className="text-sm font-semibold text-admin-text-primary flex items-center gap-2">
+                          {hConf.label}
+                          {idx === 0 && elapsedStr && (
+                            <span className="text-xs font-normal text-admin-text-muted">· {elapsedStr}</span>
+                          )}
+                        </p>
+                        <p className="text-xs text-admin-text-muted mt-0.5">
+                          {hDate.toLocaleDateString('pt-BR')} às {hDate.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                        </p>
+                        {item.notes && <p className="text-xs text-admin-text-secondary mt-1 bg-admin-bg p-1.5 rounded">{item.notes}</p>}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
         </div>
 
         <div className="px-6 py-4 border-t border-admin-border bg-admin-bg/50 flex justify-end gap-3">

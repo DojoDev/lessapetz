@@ -1,9 +1,11 @@
 export type BookingStatus =
-  | 'confirmed'
-  | 'in_progress'
-  | 'completed'
-  | 'cancelled'
-  | 'no_show';
+  | 'SCHEDULED'
+  | 'PET_ARRIVED'
+  | 'IN_PROGRESS'
+  | 'READY_FOR_PICKUP'
+  | 'COMPLETED'
+  | 'CANCELLED'
+  | 'NO_SHOW';
 
 export interface Booking {
   id: string;

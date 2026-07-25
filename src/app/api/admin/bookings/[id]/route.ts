@@ -45,11 +45,11 @@ export async function PATCH(
     const body = await req.json();
 
     // If cancelling, refund quota on the linked plan
-    if (body.status === 'cancelled') {
+    if (body.status === 'CANCELLED') {
       const existing = await bookingRepo.findById(tenantId, id);
       if (!existing) return NextResponse.json({ error: 'Booking not found' }, { status: 404 });
 
-      if (existing.customerPlanId && existing.status !== 'cancelled') {
+      if (existing.customerPlanId && existing.status !== 'CANCELLED') {
         await planRepo.refundQuota(existing.customerPlanId);
       }
     }
@@ -77,7 +77,7 @@ export async function DELETE(
     const existing = await bookingRepo.findById(tenantId, id);
     if (!existing) return NextResponse.json({ error: 'Booking not found' }, { status: 404 });
 
-    if (existing.customerPlanId && existing.status !== 'cancelled') {
+    if (existing.customerPlanId && existing.status !== 'CANCELLED') {
       await planRepo.refundQuota(existing.customerPlanId);
     }
 
