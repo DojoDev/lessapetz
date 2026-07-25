@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
       endAt: new Date(new Date(body.startAt).getTime() + (body.durationMin || 60) * 60000),
       durationMin: body.durationMin || 60,
       totalPrice: totalPrice,
-      status: 'confirmed',
+      status: 'SCHEDULED',
       notes: body.notes || null,
       paymentMethod: body.paymentMethod || null,
       paymentStatus: paymentStatus,

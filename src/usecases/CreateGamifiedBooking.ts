@@ -89,7 +89,7 @@ export class CreateGamifiedBooking {
       endAt: new Date(booking.startAt.getTime() + 60 * 60000), // default 1h
       durationMin: 60,
       totalPrice: 100, // default price for gamified form, should be dynamic later
-      status: 'confirmed' as BookingStatus,
+      status: 'SCHEDULED' as BookingStatus,
       notes: "Criado via Agendamento Expresso (Gamificado)",
       paymentMethod: booking.paymentMethod || null,
       paymentStatus: 'pending',

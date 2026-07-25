@@ -54,7 +54,13 @@ export default async function DashboardPage() {
     recentActivities,
     recentTransactions,
     planUsage,
-    lowStockProducts
+    lowStockProducts,
+    scheduledCount,
+    inProgressCount,
+    readyCount,
+    completedCount,
+    cancelledCount,
+    noShowCount
   ] = await Promise.all([
     bookingRepo.countToday(tenantId),
     bookingRepo.getTotalRevenue(tenantId, from, to),
@@ -63,7 +69,13 @@ export default async function DashboardPage() {
     bookingRepo.getRecentBookingsWithDetails(tenantId, 6),
     bookingRepo.getRecentTransactions(tenantId, 5),
     planRepo.getPlanUsageWithDetails(tenantId, 5),
-    productRepo.getLowStockProducts(tenantId)
+    productRepo.getLowStockProducts(tenantId),
+    bookingRepo.countByStatusToday(tenantId, 'SCHEDULED'),
+    bookingRepo.countByStatusToday(tenantId, 'IN_PROGRESS'),
+    bookingRepo.countByStatusToday(tenantId, 'READY_FOR_PICKUP'),
+    bookingRepo.countByStatusToday(tenantId, 'COMPLETED'),
+    bookingRepo.countByStatusToday(tenantId, 'CANCELLED'),
+    bookingRepo.countByStatusToday(tenantId, 'NO_SHOW')
   ]);
 
   const formatCurrency = (val: number) => {
@@ -148,6 +160,34 @@ export default async function DashboardPage() {
             icon={CreditCard} 
             accentColor="teal"
           />
+        </div>
+
+        {/* Operational Flow */}
+        <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
+          <div className="bg-admin-bg p-4 rounded-xl border border-admin-border text-center">
+            <h4 className="text-xs font-bold text-admin-text-muted uppercase mb-1">Aguardando</h4>
+            <p className="text-2xl font-bold text-blue-400">{scheduledCount}</p>
+          </div>
+          <div className="bg-admin-bg p-4 rounded-xl border border-admin-border text-center">
+            <h4 className="text-xs font-bold text-admin-text-muted uppercase mb-1">Em Atendimento</h4>
+            <p className="text-2xl font-bold text-purple-400">{inProgressCount}</p>
+          </div>
+          <div className="bg-admin-bg p-4 rounded-xl border border-admin-border text-center">
+            <h4 className="text-xs font-bold text-admin-text-muted uppercase mb-1">Retirada</h4>
+            <p className="text-2xl font-bold text-green-400">{readyCount}</p>
+          </div>
+          <div className="bg-admin-bg p-4 rounded-xl border border-admin-border text-center">
+            <h4 className="text-xs font-bold text-admin-text-muted uppercase mb-1">Finalizados</h4>
+            <p className="text-2xl font-bold text-slate-300">{completedCount}</p>
+          </div>
+          <div className="bg-admin-bg p-4 rounded-xl border border-admin-border text-center">
+            <h4 className="text-xs font-bold text-admin-text-muted uppercase mb-1">Cancelados</h4>
+            <p className="text-2xl font-bold text-red-400">{cancelledCount}</p>
+          </div>
+          <div className="bg-admin-bg p-4 rounded-xl border border-admin-border text-center">
+            <h4 className="text-xs font-bold text-admin-text-muted uppercase mb-1">Faltas</h4>
+            <p className="text-2xl font-bold text-orange-400">{noShowCount}</p>
+          </div>
         </div>
 
         {/* Main Content Grid */}
